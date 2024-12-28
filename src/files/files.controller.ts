@@ -7,7 +7,8 @@ import {
 } from "@nestjs/common";
 import { FilesService } from "./files.service";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiBody, ApiConsumes } from "@nestjs/swagger";
+import { SwaggerFile } from "../decorators/swagger-file.decorator";
+import { FileDto } from "../contracts/dto/file.dto";
 
 @Controller("files")
 export class FilesController {
@@ -15,18 +16,7 @@ export class FilesController {
 
   @Post(":folder")
   @UseInterceptors(FileInterceptor("file"))
-  @ApiConsumes("multipart/form-data")
-  @ApiBody({
-    schema: {
-      type: "object",
-      properties: {
-        file: {
-          type: "string",
-          format: "binary",
-        },
-      },
-    },
-  })
+  @SwaggerFile(FileDto)
   public uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Param("folder") folder: string,
