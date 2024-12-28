@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { join } from "node:path";
-import { SERVER_FOLDER } from "../constants/default.constant";
+import { SERVER_FOLDER } from "../../core/constants/default.constant";
 import { writeFile, lstat, mkdir, rm } from "node:fs/promises";
 import { Stats } from "node:fs";
 

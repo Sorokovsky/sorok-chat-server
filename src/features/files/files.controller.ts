@@ -8,8 +8,8 @@ import {
 } from "@nestjs/common";
 import { FilesService } from "./files.service";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { SwaggerFile } from "../decorators/swagger-file.decorator";
-import { FileDto } from "../contracts/dto/file.dto";
+import { SwaggerFile } from "../../core/decorators/swagger-file.decorator";
+import { FileDto } from "../../core/contracts/dto/file.dto";
 
 @Controller("files")
 export class FilesController {

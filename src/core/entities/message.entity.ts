@@ -9,7 +9,7 @@ export class MessageEntity extends BaseEntity {
   public text: string;
 
   @ManyToOne(() => UserEntity, (user) => user.messages)
-  @JoinColumn({ name: "author_id"})
+  @JoinColumn({ name: "author_id" })
   public author: UserEntity;
 
   @ManyToOne(() => ChannelEntity, (channel) => channel.messages)

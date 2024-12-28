@@ -1,10 +1,10 @@
 import { ConsoleLogger, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { getTypeOrmConfig } from "./configs/typeorm.config";
-import { FilesModule } from "./files/files.module";
+import { getTypeOrmConfig } from "./core/configs/typeorm.config";
+import { FilesModule } from "./features/files/files.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
-import { SERVER_FOLDER } from "./constants/default.constant";
+import { SERVER_FOLDER } from "./core/constants/default.constant";
 
 @Module({
   imports: [
