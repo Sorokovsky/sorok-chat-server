@@ -2,6 +2,7 @@ import { ConsoleLogger, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { getTypeOrmConfig } from "./configs/typeorm.config";
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { getTypeOrmConfig } from "./configs/typeorm.config";
       inject: [ConfigService],
       useFactory: getTypeOrmConfig,
     }),
+    FilesModule,
   ],
   providers: [ConsoleLogger],
 })
