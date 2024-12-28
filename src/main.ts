@@ -1,7 +1,7 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { INestApplication } from "@nestjs/common";
-import { run } from "./config/run.config";
+import { run } from "./configs/run.config";
 
 async function bootstrap(): Promise<void> {
   const application: INestApplication = await NestFactory.create(AppModule);

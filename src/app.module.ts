@@ -1,8 +1,17 @@
 import { ConsoleLogger, Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { getTypeOrmConfig } from "./configs/typeorm.config";
 
 @Module({
-  imports: [ConfigModule.forRoot()],
+  imports: [
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: getTypeOrmConfig,
+    }),
+  ],
   providers: [ConsoleLogger],
 })
 export class AppModule {}
