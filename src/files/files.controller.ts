@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Param,
   Post,
   UploadedFile,
@@ -22,5 +23,10 @@ export class FilesController {
     @Param("folder") folder: string,
   ) {
     return this.filesService.upload(file, folder);
+  }
+
+  @Delete(":path")
+  public deleteFile(@Param("path") path: string) {
+    return this.filesService.delete(path);
   }
 }

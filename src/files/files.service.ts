@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { join } from "node:path";
 import { SERVER_FOLDER } from "../constants/default.constant";
-import { writeFile, lstat, mkdir } from "node:fs/promises";
+import { writeFile, lstat, mkdir, rm } from "node:fs/promises";
+import { Stats } from "node:fs";
 
 @Injectable()
 export class FilesService {
@@ -23,6 +24,12 @@ export class FilesService {
     return resultPath;
   }
 
+  public async delete(path: string): Promise<void> {
+    const serverPath: string = join(SERVER_FOLDER, path);
+    console.log(serverPath);
+    return await rm(serverPath, { recursive: true, force: true });
+  }
+
   private getExtension(fileFullName: string): string {
     const parts: string[] = fileFullName.split(".");
     return parts[parts.length - 1];
@@ -35,7 +42,7 @@ export class FilesService {
 
   private async isFolderExist(folder: string): Promise<boolean> {
     try {
-      const stats = await lstat(folder);
+      const stats: Stats = await lstat(folder);
       return stats.isDirectory();
     } catch {
       return false;
