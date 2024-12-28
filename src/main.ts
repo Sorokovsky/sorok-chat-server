@@ -1,17 +1,11 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { ConsoleLogger, INestApplication } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { DEFAULT_PORT } from "./constant/default.constant";
+import { INestApplication } from "@nestjs/common";
+import { run } from "./config/run.config";
 
 async function bootstrap(): Promise<void> {
-  const app: INestApplication = await NestFactory.create(AppModule);
-  app.useLogger(new ConsoleLogger());
-  const configService: ConfigService = app.get(ConfigService);
-  const logger: ConsoleLogger = app.get(ConsoleLogger);
-  const port: number = (await configService.get("PORT")) ?? DEFAULT_PORT;
-  await app.listen(port);
-  logger.log(`Server is running on port ${port}`, "Server");
+  const application: INestApplication = await NestFactory.create(AppModule);
+  await run(application);
 }
 
 bootstrap();
