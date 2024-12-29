@@ -1,8 +1,8 @@
 import { NotFoundException } from "../base/not-found.exception";
-import { UserEntity } from "../../entities/user.entity";
+import { GetUserDto } from "../../contracts/dto/user/get-user.dto";
 
 export class UserNotFoundException extends NotFoundException {
-  constructor(key: keyof UserEntity, value: any) {
+  constructor(key: keyof GetUserDto, value: any) {
     super("User", key, value);
   }
 }
