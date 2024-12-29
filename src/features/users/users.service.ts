@@ -11,6 +11,7 @@ import { GetUserDto } from "../../core/contracts/dto/user/get-user.dto";
 import { UpdateUserDtoWithoutAvatar } from "../../core/contracts/dto/user/update-user.dto";
 import { ColumnMetadata } from "typeorm/metadata/ColumnMetadata";
 import { UserNotFoundException } from "../../core/exceptions/user/user-not-found.exception";
+import { PasswordService } from "../password/password.service";
 
 @Injectable()
 export class UsersService {
@@ -18,6 +19,7 @@ export class UsersService {
     @InjectRepository(UserEntity)
     private readonly repository: Repository<UserEntity>,
     private readonly filesService: FilesService,
+    private readonly passwordService: PasswordService,
   ) {}
 
   public async getByEmail(
@@ -51,7 +53,10 @@ export class UsersService {
       throw new UserAlreadyExists("email", user.email);
     }
 
-    const newUser: GetUserDto = this.repository.create(user);
+    const newUser: GetUserDto = this.repository.create({
+      ...user,
+      password: await this.passwordService.hash(user.password),
+    });
     await this.repository.save(newUser);
     if (avatar) {
       newUser.avatarPath = await this.uploadAvatar(avatar, `${newUser.id}`);
@@ -75,12 +80,19 @@ export class UsersService {
     newest: UpdateUserDtoWithoutAvatar,
     avatar?: Express.Multer.File,
   ): Promise<GetUserDto> {
+    const columns: (keyof UserEntity)[] = this.getColumnsName();
     let candidate: UserEntity | null = await this.repository.findOne({
       where: {
         id,
       },
-      select: this.getColumnsName(),
+      select: columns,
     });
+    if (candidate === null) {
+      throw new UserNotFoundException("id", id);
+    }
+    if (newest.password) {
+      newest.password = await this.passwordService.hash(newest.password);
+    }
     candidate = this.repository.merge(candidate, newest);
     if (avatar) {
       candidate.avatarPath = await this.uploadAvatar(avatar, `${candidate.id}`);

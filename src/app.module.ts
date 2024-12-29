@@ -6,6 +6,7 @@ import { FilesModule } from "./features/files/files.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { SERVER_FOLDER } from "./core/constants/default.constant";
 import { UsersModule } from "./features/users/users.module";
+import { PasswordModule } from "./features/password/password.module";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UsersModule } from "./features/users/users.module";
     }),
     FilesModule,
     UsersModule,
+    PasswordModule,
   ],
   providers: [ConsoleLogger],
 })

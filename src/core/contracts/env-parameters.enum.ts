@@ -5,4 +5,5 @@ export enum EnvParameters {
   DB_NAME = "DB_NAME",
   DB_USER = "DB_USER",
   DB_PASSWORD = "DB_PASSWORD",
+  PASSWORD_SALT = "PASSWORD_SALT",
 }
