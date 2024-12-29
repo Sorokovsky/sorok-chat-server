@@ -10,5 +10,6 @@ import { PasswordModule } from "../password/password.module";
   imports: [TypeOrmModule.forFeature([UserEntity]), PasswordModule],
   controllers: [UsersController],
   providers: [UsersService, FilesService],
+  exports: [UsersService],
 })
 export class UsersModule {}

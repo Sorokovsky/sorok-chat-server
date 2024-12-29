@@ -6,4 +6,5 @@ export enum EnvParameters {
   DB_USER = "DB_USER",
   DB_PASSWORD = "DB_PASSWORD",
   PASSWORD_SALT = "PASSWORD_SALT",
+  JWT_SECRET = "JWT_SECRET",
 }

@@ -1,4 +1,4 @@
-import { ConsoleLogger, Module } from "@nestjs/common";
+import { ConsoleLogger, MiddlewareConsumer, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { getTypeOrmConfig } from "./core/configs/typeorm.config";
@@ -7,10 +7,21 @@ import { ServeStaticModule } from "@nestjs/serve-static";
 import { SERVER_FOLDER } from "./core/constants/default.constant";
 import { UsersModule } from "./features/users/users.module";
 import { PasswordModule } from "./features/password/password.module";
+import { AuthModule } from "./features/auth/auth.module";
+import { JwtModule } from "@nestjs/jwt";
+import { getJwtConfig } from "./core/configs/jwt.config";
+import { TokensModule } from "./features/tokens/tokens.module";
+import { CookiesModule } from "./features/cookies/cookies.module";
+import { HttpContextMiddleware } from "./core/moddlewares/http-context/http-context.middleware";
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: getJwtConfig,
+    }),
     ServeStaticModule.forRoot({
       rootPath: SERVER_FOLDER,
     }),
@@ -22,7 +33,14 @@ import { PasswordModule } from "./features/password/password.module";
     FilesModule,
     UsersModule,
     PasswordModule,
+    AuthModule,
+    TokensModule,
+    CookiesModule,
   ],
   providers: [ConsoleLogger],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(HttpContextMiddleware).forRoutes("*");
+  }
+}

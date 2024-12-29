@@ -12,7 +12,7 @@ export const getTypeOrmConfig = async (
   port: configService.get<number>(EnvParameters.DB_PORT),
   username: configService.get<string>(EnvParameters.DB_USER),
   synchronize: true,
-  logging: true,
+  logging: false,
   autoLoadEntities: true,
   entities: ["*/**/*.entity.js"],
 });
