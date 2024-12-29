@@ -1,7 +1,8 @@
 import { AlreadyExistsException } from "../base/already-exists.exception";
+import { ChannelEntity } from "../../entities/channel.entity";
 
 export class ChannelAlreadyExistsException extends AlreadyExistsException {
-  constructor(key: string, value: any) {
+  constructor(key: keyof ChannelEntity, value: any) {
     super("Channel", key, value);
   }
 }
