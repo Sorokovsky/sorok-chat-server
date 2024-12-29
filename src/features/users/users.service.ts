@@ -81,9 +81,7 @@ export class UsersService {
       },
       select: this.getColumnsName(),
     });
-    console.log(candidate);
     candidate = this.repository.merge(candidate, newest);
-    console.log(candidate);
     if (avatar) {
       candidate.avatarPath = await this.uploadAvatar(avatar, `${candidate.id}`);
     }
