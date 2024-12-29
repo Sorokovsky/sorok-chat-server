@@ -1,4 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { ChannelEntity } from "../../../entities/channel.entity";
+import { MessageEntity } from "../../../entities/message.entity";
 
 export class GetUserDto {
   @ApiProperty({ default: 1 })
@@ -24,4 +26,10 @@ export class GetUserDto {
 
   @ApiProperty({ default: "1\\images\\avatar.png" })
   public avatarPath: string;
+
+  @ApiProperty({ default: [] })
+  public channels: ChannelEntity[];
+
+  @ApiProperty({ default: [] })
+  public messages: MessageEntity[];
 }
