@@ -26,10 +26,4 @@ export class GetUserDto {
 
   @ApiProperty({ default: "1\\images\\avatar.png" })
   public avatarPath: string;
-
-  @ApiProperty({ default: [] })
-  public channels: ChannelEntity[];
-
-  @ApiProperty({ default: [] })
-  public messages: MessageEntity[];
 }
