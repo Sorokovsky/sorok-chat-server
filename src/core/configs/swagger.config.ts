@@ -9,5 +9,9 @@ export const prepareSwagger = (application: INestApplication) => {
     .build();
   const documentFactory = () =>
     SwaggerModule.createDocument(application, config);
-  SwaggerModule.setup(SWAGGER_PREFIX, application, documentFactory);
+  SwaggerModule.setup(SWAGGER_PREFIX, application, documentFactory, {
+    swaggerOptions: {
+      defaultModelsExpandDepth: -1,
+    },
+  });
 };

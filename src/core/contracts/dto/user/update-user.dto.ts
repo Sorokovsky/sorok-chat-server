@@ -13,40 +13,39 @@ import {
   MAX_PASSWORD_MESSAGE,
   MIN_PASSWORD_MESSAGE,
 } from "../../../constants/messages.constant";
-import { ApiProperty, OmitType } from "@nestjs/swagger";
+import { ApiPropertyOptional, OmitType } from "@nestjs/swagger";
 
 export class UpdateUserDto {
-  @ApiProperty({ default: null, required: false })
+  @ApiPropertyOptional({ default: "" })
   @IsString()
   @IsOptional()
   @IsEmail()
   public email?: string;
 
-  @ApiProperty({ default: null, required: false })
+  @ApiPropertyOptional({ default: "" })
   @IsString()
   @IsOptional()
   @MinLength(MIN_PASSWORD_LENGTH, { message: MIN_PASSWORD_MESSAGE })
   @MaxLength(MAX_PASSWORD_LENGTH, { message: MAX_PASSWORD_MESSAGE })
   public password?: string;
 
-  @ApiProperty({ default: null, required: false })
+  @ApiPropertyOptional({ default: "" })
   @IsString()
   @IsOptional()
   public surname?: string;
 
-  @ApiProperty({ default: null, required: false })
+  @ApiPropertyOptional({ default: "" })
   @IsString()
   @IsOptional()
   public name?: string;
 
-  @ApiProperty({ default: null, required: false })
+  @ApiPropertyOptional({ default: "" })
   @IsString()
   @IsOptional()
   public middleName?: string;
 
-  @ApiProperty({
-    default: null,
-    required: false,
+  @ApiPropertyOptional({
+    default: "",
     type: "string",
     format: "binary",
   })
