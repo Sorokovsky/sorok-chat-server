@@ -39,8 +39,9 @@ export class UsersService {
     }
 
     const newUser: GetUserDto = this.repository.create(user);
+    await this.repository.save(newUser);
     if (avatar) {
-      newUser.avatarPath = await this.uploadAvatar(avatar, newUser.email);
+      newUser.avatarPath = await this.uploadAvatar(avatar, `${newUser.id}`);
     }
     await this.repository.save(newUser);
     return newUser;
@@ -48,11 +49,11 @@ export class UsersService {
 
   private async uploadAvatar(
     avatar: Express.Multer.File,
-    email: string,
+    userFolder: string,
   ): Promise<string> {
     return await this.filesService.upload(
       avatar,
-      join(email, MEDIA_FOLDER_NAME),
+      join(userFolder, MEDIA_FOLDER_NAME),
       "avatar",
     );
   }
