@@ -7,10 +7,10 @@ import { UserAlreadyExists } from "../../core/exceptions/user/user-already-exist
 import { FilesService } from "../files/files.service";
 import { join } from "node:path";
 import { MEDIA_FOLDER_NAME } from "../../core/constants/default.constant";
-import { UserNotFoundException } from "../../core/exceptions/user/user-not-found.exception";
 import { GetUserDto } from "../../core/contracts/dto/user/get-user.dto";
 import { UpdateUserDtoWithoutAvatar } from "../../core/contracts/dto/user/update-user.dto";
 import { ColumnMetadata } from "typeorm/metadata/ColumnMetadata";
+import { UserNotFoundException } from "../../core/exceptions/user/user-not-found.exception";
 
 @Injectable()
 export class UsersService {
@@ -24,14 +24,22 @@ export class UsersService {
     email: string,
     notFoundError: boolean = false,
   ): Promise<GetUserDto | null> {
-    return await this.getBy({ email }, notFoundError);
+    const user: GetUserDto = await this.getBy({ email });
+    if (user === null && notFoundError) {
+      throw new UserNotFoundException("email", email);
+    }
+    return user;
   }
 
   public async getById(
     id: number,
     notFoundError: boolean = false,
   ): Promise<GetUserDto | null> {
-    return await this.getBy({ id }, notFoundError);
+    const user: GetUserDto = await this.getBy({ id });
+    if (user === null && notFoundError) {
+      throw new UserNotFoundException("id", id);
+    }
+    return user;
   }
 
   public async create(
@@ -51,6 +59,15 @@ export class UsersService {
     await this.repository.save(newUser);
     delete newUser["password"];
     return newUser;
+  }
+
+  public async delete(id: number): Promise<GetUserDto> {
+    const user: GetUserDto = await this.getById(id);
+    if (user === null) {
+      throw new UserAlreadyExists("id", id);
+    }
+    await this.repository.delete(id);
+    return user;
   }
 
   public async update(
@@ -92,13 +109,8 @@ export class UsersService {
 
   private async getBy(
     findOptions: FindOptionsWhere<UserEntity>,
-    notFoundError: boolean = false,
   ): Promise<GetUserDto | null> {
-    const user: GetUserDto = await this.repository.findOneBy(findOptions);
-    if (user === null && notFoundError) {
-      throw new UserNotFoundException("email", findOptions.email);
-    }
-    return user;
+    return await this.repository.findOneBy(findOptions);
   }
 
   private getColumnsName(): (keyof UserEntity)[] {

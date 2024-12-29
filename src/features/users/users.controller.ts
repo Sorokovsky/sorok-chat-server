@@ -1,6 +1,6 @@
 import {
   Body,
-  Controller,
+  Controller, Delete, Get,
   Param,
   ParseIntPipe,
   Patch,
@@ -30,6 +30,21 @@ import {
 @Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get(":id")
+  @ApiOkResponse({
+    type: GetUserDto,
+    description: "Found user successfully",
+  })
+  @ApiBadRequestResponse({
+    description: "User not found",
+    type: ErrorDto,
+  })
+  public async getById(
+    @Param("id", new ParseIntPipe()) id: number,
+  ): Promise<GetUserDto> {
+    return await this.usersService.getById(id, true);
+  }
 
   @Post()
   @SwaggerFile(CreateUserDto)
@@ -66,5 +81,20 @@ export class UsersController {
     @UploadedFile() avatar?: Express.Multer.File,
   ): Promise<GetUserDto> {
     return await this.usersService.update(id, newest, avatar);
+  }
+
+  @ApiOkResponse({
+    type: GetUserDto,
+    description: "Deleted user successfully",
+  })
+  @ApiBadRequestResponse({
+    description: "User not found",
+    type: ErrorDto,
+  })
+  @Delete(":id")
+  public async delete(
+    @Param("id", new ParseIntPipe()) id: number,
+  ): Promise<GetUserDto> {
+    return await this.usersService.delete(id);
   }
 }
