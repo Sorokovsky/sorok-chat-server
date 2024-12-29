@@ -1,4 +1,13 @@
-import { Body, Controller, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { SwaggerFile } from "../../core/decorators/swagger-file.decorator";
 import {
@@ -6,9 +15,17 @@ import {
   CreateUserDtoWithoutAvatar,
 } from "../../core/contracts/dto/user/create-user.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiBadRequestResponse, ApiCreatedResponse } from "@nestjs/swagger";
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiOkResponse,
+} from "@nestjs/swagger";
 import { ErrorDto } from "../../core/contracts/dto/error.dto";
 import { GetUserDto } from "../../core/contracts/dto/user/get-user.dto";
+import {
+  UpdateUserDto,
+  UpdateUserDtoWithoutAvatar,
+} from "../../core/contracts/dto/user/update-user.dto";
 
 @Controller("users")
 export class UsersController {
@@ -30,5 +47,24 @@ export class UsersController {
     @UploadedFile() avatar?: Express.Multer.File,
   ): Promise<GetUserDto> {
     return await this.usersService.create(user, avatar);
+  }
+
+  @SwaggerFile(UpdateUserDto)
+  @UseInterceptors(FileInterceptor("avatar"))
+  @ApiOkResponse({
+    type: GetUserDto,
+    description: "Updated user successfully",
+  })
+  @ApiBadRequestResponse({
+    description: "User not found",
+    type: ErrorDto,
+  })
+  @Patch(":id")
+  public async update(
+    @Param("id", new ParseIntPipe()) id: number,
+    @Body() newest: UpdateUserDtoWithoutAvatar,
+    @UploadedFile() avatar?: Express.Multer.File,
+  ): Promise<GetUserDto> {
+    return await this.usersService.update(id, newest, avatar);
   }
 }

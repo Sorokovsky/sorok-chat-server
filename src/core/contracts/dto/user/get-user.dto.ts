@@ -1,6 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { ChannelEntity } from "../../../entities/channel.entity";
-import { MessageEntity } from "../../../entities/message.entity";
 
 export class GetUserDto {
   @ApiProperty({ default: 1 })
