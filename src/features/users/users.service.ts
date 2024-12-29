@@ -53,7 +53,7 @@ export class UsersService {
   ): Promise<string> {
     return await this.filesService.upload(
       avatar,
-      join(userFolder, MEDIA_FOLDER_NAME),
+      join("users", userFolder, MEDIA_FOLDER_NAME),
       "avatar",
     );
   }
