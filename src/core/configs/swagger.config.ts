@@ -6,6 +6,7 @@ export const prepareSwagger = (application: INestApplication) => {
   const config = new DocumentBuilder()
     .setTitle("SorokChat Server")
     .setVersion(VERSION)
+    .addBearerAuth()
     .build();
   const documentFactory = () =>
     SwaggerModule.createDocument(application, config);

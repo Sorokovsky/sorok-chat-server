@@ -1,10 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { TokensDto } from "../../core/contracts/dto/tokens.dto";
+import { ConfigService } from "@nestjs/config";
+import { EnvParameters } from "../../core/contracts/env-parameters.enum";
 
 @Injectable()
 export class TokensService {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+  ) {}
 
   public async generateTokens<T extends object>(
     payload: T,
@@ -35,8 +40,15 @@ export class TokensService {
     payload: T,
     lifeTime: number | string,
   ): Promise<string> {
-    return await this.jwtService.signAsync(payload, {
-      expiresIn: lifeTime,
-    });
+    const secret: string = this.configService.get<string>(
+      EnvParameters.JWT_SECRET,
+    );
+    return await this.jwtService.signAsync(
+      { ...payload },
+      {
+        expiresIn: lifeTime,
+        secret,
+      },
+    );
   }
 }

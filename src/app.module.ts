@@ -13,6 +13,7 @@ import { getJwtConfig } from "./core/configs/jwt.config";
 import { TokensModule } from "./features/tokens/tokens.module";
 import { CookiesModule } from "./features/cookies/cookies.module";
 import { HttpContextMiddleware } from "./core/moddlewares/http-context/http-context.middleware";
+import { BearerStorageModule } from './features/bearer-storage/bearer-storage.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { HttpContextMiddleware } from "./core/moddlewares/http-context/http-cont
     AuthModule,
     TokensModule,
     CookiesModule,
+    BearerStorageModule,
   ],
   providers: [ConsoleLogger],
 })
