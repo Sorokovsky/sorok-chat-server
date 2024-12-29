@@ -5,6 +5,7 @@ import { getTypeOrmConfig } from "./core/configs/typeorm.config";
 import { FilesModule } from "./features/files/files.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { SERVER_FOLDER } from "./core/constants/default.constant";
+import { UsersModule } from './features/users/users.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SERVER_FOLDER } from "./core/constants/default.constant";
       useFactory: getTypeOrmConfig,
     }),
     FilesModule,
+    UsersModule,
   ],
   providers: [ConsoleLogger],
 })

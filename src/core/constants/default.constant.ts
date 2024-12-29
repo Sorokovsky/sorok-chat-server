@@ -14,3 +14,5 @@ export const API_PREFIX: string = "api";
 export const SWAGGER_PREFIX: string = "swagger";
 export const VERSION: string = "1.0";
 export const SERVER_FOLDER: string = join(__dirname, "..", "uploads");
+export const MIN_PASSWORD_LENGTH: number = 8;
+export const MAX_PASSWORD_LENGTH: number = 20;

@@ -18,15 +18,15 @@ export class FilesController {
   @Post(":folder")
   @UseInterceptors(FileInterceptor("file"))
   @SwaggerFile(FileDto)
-  public uploadFile(
+  public async uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Param("folder") folder: string,
-  ) {
-    return this.filesService.upload(file, folder);
+  ): Promise<string> {
+    return await this.filesService.upload(file, folder);
   }
 
   @Delete(":path")
-  public deleteFile(@Param("path") path: string) {
-    return this.filesService.delete(path);
+  public async deleteFile(@Param("path") path: string): Promise<void> {
+    return await this.filesService.delete(path);
   }
 }
