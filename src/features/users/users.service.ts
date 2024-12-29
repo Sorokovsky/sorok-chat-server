@@ -6,10 +6,9 @@ import { CreateUserDtoWithoutAvatar } from "../../core/contracts/dto/user/create
 import { UserAlreadyExists } from "../../core/exceptions/user/user-already-exists";
 import { FilesService } from "../files/files.service";
 import { join } from "node:path";
-import {
-  MEDIA_FOLDER_NAME,
-  SERVER_FOLDER,
-} from "../../core/constants/default.constant";
+import { MEDIA_FOLDER_NAME } from "../../core/constants/default.constant";
+import { UserNotFoundException } from "../../core/exceptions/user/user-not-found.exception";
+import { GetUserDto } from "../../core/contracts/dto/user/get-user.dto";
 
 @Injectable()
 export class UsersService {
@@ -19,25 +18,42 @@ export class UsersService {
     private readonly filesService: FilesService,
   ) {}
 
+  public async getByEmail(
+    email: string,
+    notFoundError: boolean = false,
+  ): Promise<GetUserDto | null> {
+    const user: GetUserDto = await this.repository.findOneBy({ email });
+    if (user === null && notFoundError) {
+      throw new UserNotFoundException("email", email);
+    }
+    return user;
+  }
+
   public async create(
     user: CreateUserDtoWithoutAvatar,
     avatar?: Express.Multer.File,
-  ): Promise<UserEntity> {
-    const candidate: UserEntity | null = await this.repository.findOneBy({
-      email: user.email,
-    });
+  ): Promise<GetUserDto> {
+    const candidate: GetUserDto | null = await this.getByEmail(user.email);
     if (candidate !== null) {
       throw new UserAlreadyExists("email", user.email);
     }
 
-    const newUser: UserEntity = this.repository.create(user);
-    if (avatar)
-      newUser.avatarPath = await this.filesService.upload(
-        avatar,
-        join(SERVER_FOLDER, user.email, MEDIA_FOLDER_NAME),
-        "avatar",
-      );
+    const newUser: GetUserDto = this.repository.create(user);
+    if (avatar) {
+      newUser.avatarPath = await this.uploadAvatar(avatar, newUser.email);
+    }
     await this.repository.save(newUser);
     return newUser;
+  }
+
+  private async uploadAvatar(
+    avatar: Express.Multer.File,
+    email: string,
+  ): Promise<string> {
+    return await this.filesService.upload(
+      avatar,
+      join(email, MEDIA_FOLDER_NAME),
+      "avatar",
+    );
   }
 }

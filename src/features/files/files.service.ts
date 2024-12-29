@@ -12,7 +12,7 @@ export class FilesService {
     name?: string,
   ): Promise<string> {
     const extension: string = this.getExtension(file.originalname);
-    const fileName = name ?? this.getFileName(file.originalname);
+    const fileName: string = name ?? this.getFileName(file.originalname);
     const newFileName: string = `${fileName}.${extension}`;
     const resultPath: string = join(folder, newFileName);
     const serverFolder: string = join(SERVER_FOLDER, folder);
