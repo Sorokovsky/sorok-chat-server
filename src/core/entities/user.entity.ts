@@ -7,9 +7,9 @@ import {
   ManyToMany,
   OneToMany,
 } from "typeorm";
-import { DEFAULT_AVATAR_PATH } from "../constants/default.constant";
-import { ChannelEntity } from "./channel.entity";
-import { MessageEntity } from "./message.entity";
+import { DEFAULT_AVATAR_PATH } from "@constants/default.constant";
+import { ChannelEntity } from "@entities/channel.entity";
+import { MessageEntity } from "@entities/message.entity";
 
 @Entity({ name: "users" })
 export class UserEntity extends BaseEntity {

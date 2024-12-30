@@ -1,5 +1,5 @@
 import { INestApplication, ValidationPipe } from "@nestjs/common";
-import { API_PREFIX } from "../constants/default.constant";
+import { API_PREFIX } from "@constants/default.constant";
 import * as cookieParser from "cookie-parser";
 
 export const prepareApplication = (application: INestApplication) => {

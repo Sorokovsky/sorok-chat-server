@@ -1,7 +1,7 @@
 import { ConsoleLogger, INestApplication } from "@nestjs/common";
-import { DEFAULT_PORT } from "../constants/default.constant";
+import { DEFAULT_PORT } from "@constants/default.constant";
 import { ConfigService } from "@nestjs/config";
-import { EnvParameters } from "../contracts/env-parameters.enum";
+import { EnvParameters } from "@contracts/env-parameters.enum";
 
 export const run = async (application: INestApplication): Promise<void> => {
   const configService: ConfigService = application.get(ConfigService);

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {
   AUTHORIZATION_HEADER_NAME,
   BEARER_TOKEN_PREFIX,
-} from "../../core/constants/default.constant";
+} from "@constants/default.constant";
 import { Request, Response } from "express";
 
 @Injectable()

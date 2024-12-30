@@ -1,20 +1,20 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { UserEntity } from "../../core/entities/user.entity";
+import { UserEntity } from "@entities/user.entity";
 import { FindOptionsWhere, Repository } from "typeorm";
-import { CreateUserDtoWithoutAvatar } from "../../core/contracts/dto/user/create-user.dto";
-import { UserAlreadyExists } from "../../core/exceptions/user/user-already-exists";
-import { FilesService } from "../files/files.service";
+import { CreateUserDtoWithoutAvatar } from "@contracts/dto/user/create-user.dto";
+import { UserAlreadyExists } from "@exceptions/user/user-already-exists";
+import { FilesService } from "@features/files/files.service";
 import { join } from "node:path";
-import { MEDIA_FOLDER_NAME } from "../../core/constants/default.constant";
+import { MEDIA_FOLDER_NAME } from "@constants/default.constant";
 import {
   GetUserDto,
   GetUserDtoWithPassword,
-} from "../../core/contracts/dto/user/get-user.dto";
-import { UpdateUserDtoWithoutAvatar } from "../../core/contracts/dto/user/update-user.dto";
+} from "@contracts/dto/user/get-user.dto";
+import { UpdateUserDtoWithoutAvatar } from "@contracts/dto/user/update-user.dto";
 import { ColumnMetadata } from "typeorm/metadata/ColumnMetadata";
-import { UserNotFoundException } from "../../core/exceptions/user/user-not-found.exception";
-import { PasswordService } from "../password/password.service";
+import { UserNotFoundException } from "@exceptions/user/user-not-found.exception";
+import { PasswordService } from "@features/password/password.service";
 
 @Injectable()
 export class UsersService {

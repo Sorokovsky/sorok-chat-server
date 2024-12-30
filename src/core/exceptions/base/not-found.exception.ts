@@ -1,5 +1,5 @@
 import { NotFoundException as NotFound } from "@nestjs/common";
-import { getNotFoundMessage } from "../../constants/messages.constant";
+import { getNotFoundMessage } from "@constants/messages.constant";
 
 export class NotFoundException extends NotFound {
   constructor(entity: string, key: string, value: any) {

@@ -1,7 +1,7 @@
-import { BaseEntity } from "./base.entity";
+import { BaseEntity } from "@entities/base.entity";
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
-import { UserEntity } from "./user.entity";
-import { ChannelEntity } from "./channel.entity";
+import { UserEntity } from "@entities/user.entity";
+import { ChannelEntity } from "@entities/channel.entity";
 
 @Entity({ name: "messages" })
 export class MessageEntity extends BaseEntity {

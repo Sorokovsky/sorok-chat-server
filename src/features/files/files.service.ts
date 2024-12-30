@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { join } from "node:path";
-import { SERVER_FOLDER } from "../../core/constants/default.constant";
-import { writeFile, lstat, mkdir, rm } from "node:fs/promises";
+import { SERVER_FOLDER } from "@constants/default.constant";
+import { lstat, mkdir, rm, writeFile } from "node:fs/promises";
 import { Stats } from "node:fs";
-import { PathNotFoundException } from "../../core/exceptions/path/path-not-found.exception";
-import { PathAlreadyExistsException } from "../../core/exceptions/path/path-already-exists.exception";
+import { PathNotFoundException } from "@exceptions/path/path-not-found.exception";
+import { PathAlreadyExistsException } from "@exceptions/path/path-already-exists.exception";
 
 @Injectable()
 export class FilesService {

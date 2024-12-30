@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { CookiesService } from "./cookies.service";
+import { CookiesService } from "@features/cookies/cookies.service";
 
 @Module({
   providers: [CookiesService],

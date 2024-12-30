@@ -1,7 +1,7 @@
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 import { Request } from "express";
-import { GetUserDto } from "../contracts/dto/user/get-user.dto";
-import { REQUEST_USER_KEY } from "../constants/default.constant";
+import { GetUserDto } from "@contracts/dto/user/get-user.dto";
+import { REQUEST_USER_KEY } from "@constants/default.constant";
 
 export const CurrentUser = createParamDecorator(
   (data: keyof GetUserDto, context: ExecutionContext) => {

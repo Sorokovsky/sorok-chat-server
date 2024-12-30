@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 export class HttpContextDto {
   public request: Request;
   public response: Response;

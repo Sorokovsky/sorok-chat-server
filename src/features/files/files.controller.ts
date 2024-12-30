@@ -10,16 +10,16 @@ import {
 } from "@nestjs/common";
 import { FilesService } from "./files.service";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { SwaggerFile } from "../../core/decorators/swagger-file.decorator";
-import { FileDto } from "../../core/contracts/dto/file.dto";
-import { Auth } from "../../core/decorators/auth.decorator";
+import { SwaggerFile } from "@decorators/swagger-file.decorator";
+import { FileDto } from "@contracts/dto/file.dto";
+import { Auth } from "@decorators/auth.decorator";
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
 } from "@nestjs/swagger";
-import { ErrorDto } from "../../core/contracts/dto/error.dto";
+import { ErrorDto } from "@contracts/dto/error.dto";
 
 @Controller("files")
 export class FilesController {

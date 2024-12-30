@@ -8,11 +8,11 @@ import {
 import {
   MAX_PASSWORD_LENGTH,
   MIN_PASSWORD_LENGTH,
-} from "../../../constants/default.constant";
+} from "@constants/default.constant";
 import {
   MAX_PASSWORD_MESSAGE,
   MIN_PASSWORD_MESSAGE,
-} from "../../../constants/messages.constant";
+} from "@constants/messages.constant";
 import { ApiPropertyOptional, OmitType } from "@nestjs/swagger";
 
 export class UpdateUserDto {

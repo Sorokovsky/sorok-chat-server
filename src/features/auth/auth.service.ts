@@ -1,23 +1,23 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { UsersService } from "../users/users.service";
-import { CreateUserDtoWithoutAvatar } from "../../core/contracts/dto/user/create-user.dto";
+import { UsersService } from "@features/users/users.service";
+import { CreateUserDtoWithoutAvatar } from "@contracts/dto/user/create-user.dto";
 import {
   GetUserDto,
   GetUserDtoWithPassword,
-} from "../../core/contracts/dto/user/get-user.dto";
-import { TokensService } from "../tokens/tokens.service";
-import { TokensDto } from "../../core/contracts/dto/tokens.dto";
-import { CookiesService } from "../cookies/cookies.service";
+} from "@contracts/dto/user/get-user.dto";
+import { TokensService } from "@features/tokens/tokens.service";
+import { TokensDto } from "@contracts/dto/tokens.dto";
+import { CookiesService } from "@features/cookies/cookies.service";
 import {
   REFRESH_TOKEN_NAME,
   REQUEST_USER_KEY,
-} from "../../core/constants/default.constant";
-import { BearerStorageService } from "../bearer-storage/bearer-storage.service";
+} from "@constants/default.constant";
+import { BearerStorageService } from "@features/bearer-storage/bearer-storage.service";
 import { request, Request, Response } from "express";
-import { TokenPayload } from "../../core/contracts/token-payload";
-import { LoginDto } from "../../core/contracts/dto/auth/login.dto";
-import { PasswordService } from "../password/password.service";
-import { INVALID_PASSWORD_MESSAGE } from "../../core/constants/messages.constant";
+import { TokenPayload } from "@contracts/token-payload";
+import { LoginDto } from "@contracts/dto/auth/login.dto";
+import { PasswordService } from "@features/password/password.service";
+import { INVALID_PASSWORD_MESSAGE } from "@constants/messages.constant";
 
 @Injectable()
 export class AuthService {

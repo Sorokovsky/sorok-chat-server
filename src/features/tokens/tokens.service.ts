@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { TokensDto } from "../../core/contracts/dto/tokens.dto";
+import { TokensDto } from "@contracts/dto/tokens.dto";
 import { ConfigService } from "@nestjs/config";
-import { EnvParameters } from "../../core/contracts/env-parameters.enum";
+import { EnvParameters } from "@contracts/env-parameters.enum";
 
 @Injectable()
 export class TokensService {

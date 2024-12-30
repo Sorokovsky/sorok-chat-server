@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { BearerStorageService } from "./bearer-storage.service";
+import { BearerStorageService } from "@features/bearer-storage/bearer-storage.service";
 
 @Module({
   providers: [BearerStorageService],

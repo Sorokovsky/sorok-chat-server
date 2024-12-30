@@ -10,9 +10,9 @@ import {
 import {
   DEFAULT_AVATAR_PATH,
   DEFAULT_CHANNEL_IMAGE_PATH,
-} from "../constants/default.constant";
-import { UserEntity } from "./user.entity";
-import { MessageEntity } from "./message.entity";
+} from "@constants/default.constant";
+import { UserEntity } from "@entities/user.entity";
+import { MessageEntity } from "@entities/message.entity";
 
 @Entity({ name: "channels" })
 export class ChannelEntity extends BaseEntity {

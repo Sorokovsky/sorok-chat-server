@@ -1,4 +1,4 @@
-import { NotFoundException } from "../base/not-found.exception";
+import { NotFoundException } from "@exceptions/base/not-found.exception";
 
 export class PathNotFoundException extends NotFoundException {
   constructor(path: string) {

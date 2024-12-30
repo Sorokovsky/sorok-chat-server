@@ -11,8 +11,8 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { GetUserDto } from "../../core/contracts/dto/user/get-user.dto";
-import { SwaggerFile } from "../../core/decorators/swagger-file.decorator";
+import { GetUserDto } from "@contracts/dto/user/get-user.dto";
+import { SwaggerFile } from "@decorators/swagger-file.decorator";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
   ApiBadRequestResponse,
@@ -20,14 +20,14 @@ import {
   ApiNoContentResponse,
   ApiNotFoundResponse,
 } from "@nestjs/swagger";
-import { ErrorDto } from "../../core/contracts/dto/error.dto";
+import { ErrorDto } from "@contracts/dto/error.dto";
 import {
   CreateUserDto,
   CreateUserDtoWithoutAvatar,
-} from "../../core/contracts/dto/user/create-user.dto";
+} from "@contracts/dto/user/create-user.dto";
 import { Response } from "express";
-import { Auth } from "../../core/decorators/auth.decorator";
-import { LoginDto } from "../../core/contracts/dto/auth/login.dto";
+import { Auth } from "@decorators/auth.decorator";
+import { LoginDto } from "@contracts/dto/auth/login.dto";
 
 @Controller("auth")
 export class AuthController {

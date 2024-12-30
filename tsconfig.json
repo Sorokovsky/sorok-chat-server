@@ -16,6 +16,16 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@features/*": ["src/features/*"],
+      "@contracts/*": ["src/core/contracts/*"],
+      "@configs/*": ["src/core/configs/*"],
+      "@constants/*": ["src/core/constants/*"],
+      "@decorators/*": ["src/core/decorators/*"],
+      "@entities/*": ["src/core/entities/*"],
+      "@exceptions/*": ["src/core/exceptions/*"],
+      "@guards/*": ["src/core/guards/*"],
+    }
+  },
 }

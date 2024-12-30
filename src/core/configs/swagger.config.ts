@@ -4,7 +4,7 @@ import {
   APPLICATION_NAME,
   SWAGGER_PREFIX,
   VERSION,
-} from "../constants/default.constant";
+} from "@constants/default.constant";
 
 export const prepareSwagger = (application: INestApplication): void => {
   const config = new DocumentBuilder()

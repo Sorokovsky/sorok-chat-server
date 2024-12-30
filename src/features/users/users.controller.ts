@@ -10,26 +10,26 @@ import {
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
-import { UsersService } from "./users.service";
-import { SwaggerFile } from "../../core/decorators/swagger-file.decorator";
+import { UsersService } from "@features/users/users.service";
+import { SwaggerFile } from "@decorators/swagger-file.decorator";
 import {
   CreateUserDto,
   CreateUserDtoWithoutAvatar,
-} from "../../core/contracts/dto/user/create-user.dto";
+} from "@contracts/dto/user/create-user.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiOkResponse,
 } from "@nestjs/swagger";
-import { ErrorDto } from "../../core/contracts/dto/error.dto";
-import { GetUserDto } from "../../core/contracts/dto/user/get-user.dto";
+import { ErrorDto } from "@contracts/dto/error.dto";
+import { GetUserDto } from "@contracts/dto/user/get-user.dto";
 import {
   UpdateUserDto,
   UpdateUserDtoWithoutAvatar,
-} from "../../core/contracts/dto/user/update-user.dto";
-import { Auth } from "../../core/decorators/auth.decorator";
-import { CurrentUser } from "../../core/decorators/current-user.decorator";
+} from "@contracts/dto/user/update-user.dto";
+import { Auth } from "@decorators/auth.decorator";
+import { CurrentUser } from "@decorators/current-user.decorator";
 
 @Controller("users")
 export class UsersController {

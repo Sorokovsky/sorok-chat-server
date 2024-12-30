@@ -1,6 +1,6 @@
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
-import { EnvParameters } from "../contracts/env-parameters.enum";
+import { EnvParameters } from "@contracts/env-parameters.enum";
 
 export const getTypeOrmConfig = async (
   configService: ConfigService,

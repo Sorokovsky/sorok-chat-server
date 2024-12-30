@@ -1,4 +1,7 @@
-import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from "./default.constant";
+import {
+  MAX_PASSWORD_LENGTH,
+  MIN_PASSWORD_LENGTH,
+} from "@constants/default.constant";
 
 export const MAX_PASSWORD_MESSAGE = `Password must less or equals than ${MAX_PASSWORD_LENGTH} characters long`;
 export const MIN_PASSWORD_MESSAGE = `Password must more or equals than ${MIN_PASSWORD_LENGTH} characters long`;
