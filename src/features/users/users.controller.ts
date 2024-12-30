@@ -29,6 +29,7 @@ import {
   UpdateUserDtoWithoutAvatar,
 } from "../../core/contracts/dto/user/update-user.dto";
 import { Auth } from "../../core/decorators/auth.decorator";
+import { CurrentUser } from "../../core/decorators/current-user.decorator";
 
 @Controller("users")
 export class UsersController {
@@ -68,6 +69,7 @@ export class UsersController {
     return await this.usersService.create(user, avatar);
   }
 
+  @Auth()
   @SwaggerFile(UpdateUserDto)
   @UseInterceptors(FileInterceptor("avatar"))
   @ApiOkResponse({
@@ -78,15 +80,16 @@ export class UsersController {
     description: "User not found",
     type: ErrorDto,
   })
-  @Patch(":id")
+  @Patch()
   public async update(
-    @Param("id", new ParseIntPipe()) id: number,
+    @CurrentUser("id") id: number,
     @Body() newest: UpdateUserDtoWithoutAvatar,
     @UploadedFile() avatar?: Express.Multer.File,
   ): Promise<GetUserDto> {
     return await this.usersService.update(id, newest, avatar);
   }
 
+  @Auth()
   @ApiOkResponse({
     type: GetUserDto,
     description: "Deleted user successfully",
@@ -95,10 +98,8 @@ export class UsersController {
     description: "User not found",
     type: ErrorDto,
   })
-  @Delete(":id")
-  public async delete(
-    @Param("id", new ParseIntPipe()) id: number,
-  ): Promise<GetUserDto> {
+  @Delete()
+  public async delete(@CurrentUser("id") id: number): Promise<GetUserDto> {
     return await this.usersService.delete(id);
   }
 }

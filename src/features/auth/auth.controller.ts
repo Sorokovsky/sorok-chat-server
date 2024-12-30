@@ -18,7 +18,6 @@ import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiNoContentResponse,
-  ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { ErrorDto } from "../../core/contracts/dto/error.dto";
 import {
@@ -58,10 +57,6 @@ export class AuthController {
   @ApiNoContentResponse({
     description: "Logged out successfully",
   })
-  @ApiUnauthorizedResponse({
-    description: "User not authenticated",
-    type: ErrorDto,
-  })
   public async logout(
     @Res({ passthrough: true }) response: Response,
   ): Promise<void> {
@@ -72,10 +67,6 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({
     description: "Logged in successfully",
-  })
-  @ApiBadRequestResponse({
-    description: "Bad request",
-    type: ErrorDto,
   })
   public async login(
     @Res({ passthrough: true }) response: Response,
