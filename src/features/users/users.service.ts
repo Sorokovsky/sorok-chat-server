@@ -7,7 +7,10 @@ import { UserAlreadyExists } from "../../core/exceptions/user/user-already-exist
 import { FilesService } from "../files/files.service";
 import { join } from "node:path";
 import { MEDIA_FOLDER_NAME } from "../../core/constants/default.constant";
-import { GetUserDto, GetUserDtoWithPassword } from "../../core/contracts/dto/user/get-user.dto";
+import {
+  GetUserDto,
+  GetUserDtoWithPassword,
+} from "../../core/contracts/dto/user/get-user.dto";
 import { UpdateUserDtoWithoutAvatar } from "../../core/contracts/dto/user/update-user.dto";
 import { ColumnMetadata } from "typeorm/metadata/ColumnMetadata";
 import { UserNotFoundException } from "../../core/exceptions/user/user-not-found.exception";
@@ -116,6 +119,7 @@ export class UsersService {
       avatar,
       join("users", userFolder, MEDIA_FOLDER_NAME),
       "avatar",
+      true,
     );
   }
 

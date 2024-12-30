@@ -3,6 +3,8 @@ import { join } from "node:path";
 import { SERVER_FOLDER } from "../../core/constants/default.constant";
 import { writeFile, lstat, mkdir, rm } from "node:fs/promises";
 import { Stats } from "node:fs";
+import { PathNotFoundException } from "../../core/exceptions/path/path-not-found.exception";
+import { PathAlreadyExistsException } from "../../core/exceptions/path/path-already-exists.exception";
 
 @Injectable()
 export class FilesService {
@@ -10,6 +12,7 @@ export class FilesService {
     file: Express.Multer.File,
     folder: string,
     name?: string,
+    rewrite: boolean = false,
   ): Promise<string> {
     const extension: string = this.getExtension(file.originalname);
     const fileName: string = name ?? this.getFileName(file.originalname);
@@ -17,6 +20,10 @@ export class FilesService {
     const resultPath: string = join(folder, newFileName);
     const serverFolder: string = join(SERVER_FOLDER, folder);
     const serverPath: string = join(serverFolder, newFileName);
+    const isPathExists: boolean = await this.isPathExists(serverPath);
+    if (isPathExists === true && rewrite === false) {
+      throw new PathAlreadyExistsException(resultPath);
+    }
     if ((await this.isFolderExist(serverFolder)) === false) {
       await mkdir(serverFolder, { recursive: true });
     }
@@ -26,12 +33,16 @@ export class FilesService {
 
   public async delete(path: string): Promise<void> {
     const serverPath: string = join(SERVER_FOLDER, path);
-    return await rm(serverPath, { recursive: true, force: true });
+    const isPathExists: boolean = await this.isPathExists(serverPath);
+    if (isPathExists === false) {
+      throw new PathNotFoundException(path);
+    }
+    return await rm(serverPath, { force: true });
   }
 
   private getExtension(fileFullName: string): string {
     const parts: string[] = fileFullName.split(".");
-    return parts[parts.length - 1];
+    return parts.at(-1);
   }
 
   private getFileName(fileFullName: string): string {
@@ -43,6 +54,15 @@ export class FilesService {
     try {
       const stats: Stats = await lstat(folder);
       return stats.isDirectory();
+    } catch {
+      return false;
+    }
+  }
+
+  private async isPathExists(path: string): Promise<boolean> {
+    try {
+      await lstat(path);
+      return true;
     } catch {
       return false;
     }

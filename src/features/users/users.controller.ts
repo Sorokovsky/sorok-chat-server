@@ -36,7 +36,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Auth()
-  @Get(":id")
+  @Get("by-id/:id")
   @ApiOkResponse({
     type: GetUserDto,
     description: "Found user successfully",
@@ -48,6 +48,20 @@ export class UsersController {
   public async getById(
     @Param("id", new ParseIntPipe()) id: number,
   ): Promise<GetUserDto> {
+    return await this.usersService.getById(id, true);
+  }
+
+  @Auth()
+  @Get("get-me")
+  @ApiOkResponse({
+    type: GetUserDto,
+    description: "Found user successfully",
+  })
+  @ApiBadRequestResponse({
+    description: "User not found",
+    type: ErrorDto,
+  })
+  public async getMe(@CurrentUser("id") id: number): Promise<GetUserDto> {
     return await this.usersService.getById(id, true);
   }
 
