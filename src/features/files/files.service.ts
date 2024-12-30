@@ -26,7 +26,6 @@ export class FilesService {
 
   public async delete(path: string): Promise<void> {
     const serverPath: string = join(SERVER_FOLDER, path);
-    console.log(serverPath);
     return await rm(serverPath, { recursive: true, force: true });
   }
 
