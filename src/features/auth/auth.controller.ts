@@ -74,7 +74,7 @@ export class AuthController {
     type: ErrorDto,
   })
   @ApiBadRequestResponse({
-    description: "Wrong password or user not found",
+    description: "Wrong password",
     type: ErrorDto,
   })
   public async login(
