@@ -1,4 +1,4 @@
-import { ConsoleLogger, MiddlewareConsumer, Module } from "@nestjs/common";
+import { ConsoleLogger, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { getTypeOrmConfig } from "./core/configs/typeorm.config";
@@ -12,8 +12,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { getJwtConfig } from "./core/configs/jwt.config";
 import { TokensModule } from "./features/tokens/tokens.module";
 import { CookiesModule } from "./features/cookies/cookies.module";
-import { HttpContextMiddleware } from "./core/moddlewares/http-context/http-context.middleware";
-import { BearerStorageModule } from './features/bearer-storage/bearer-storage.module';
+import { BearerStorageModule } from "./features/bearer-storage/bearer-storage.module";
 
 @Module({
   imports: [
@@ -41,8 +40,4 @@ import { BearerStorageModule } from './features/bearer-storage/bearer-storage.mo
   ],
   providers: [ConsoleLogger],
 })
-export class AppModule {
-  configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(HttpContextMiddleware).forRoutes("*");
-  }
-}
+export class AppModule {}

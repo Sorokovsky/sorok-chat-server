@@ -33,7 +33,10 @@ export class TokensService {
   }
 
   public async verifyToken<T extends object>(token: string): Promise<T> {
-    return await this.jwtService.verifyAsync(token);
+    const secret: string = this.configService.get<string>(
+      EnvParameters.JWT_SECRET,
+    );
+    return await this.jwtService.verifyAsync(token, { secret });
   }
 
   private async generateToken<T extends object>(

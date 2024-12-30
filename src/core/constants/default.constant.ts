@@ -19,3 +19,4 @@ export const MAX_PASSWORD_LENGTH: number = 20;
 export const REFRESH_TOKEN_NAME: string = "refresh-token";
 export const AUTHORIZATION_HEADER_NAME: string = "Authorization";
 export const BEARER_TOKEN_PREFIX: string = "Bearer ";
+export const REQUEST_USER_KEY: string = "user";

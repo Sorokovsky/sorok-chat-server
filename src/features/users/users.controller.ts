@@ -28,11 +28,13 @@ import {
   UpdateUserDto,
   UpdateUserDtoWithoutAvatar,
 } from "../../core/contracts/dto/user/update-user.dto";
+import { Auth } from "../../core/decorators/auth.decorator";
 
 @Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Auth()
   @Get(":id")
   @ApiOkResponse({
     type: GetUserDto,
