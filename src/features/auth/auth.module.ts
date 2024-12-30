@@ -20,5 +20,4 @@ import { PasswordModule } from "@features/password/password.module";
   providers: [AuthService],
   exports: [AuthService],
 })
-export class AuthModule {
-}
+export class AuthModule {}
