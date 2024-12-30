@@ -1,6 +1,6 @@
 import { applyDecorators, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "../guards/auth/auth.guard";
-import { ApiUnauthorizedResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { ErrorDto } from "../contracts/dto/error.dto";
 
 export const Auth = () =>
@@ -10,4 +10,5 @@ export const Auth = () =>
       description: "Unauthorized.",
       type: ErrorDto,
     }),
+    ApiBearerAuth(),
   );
