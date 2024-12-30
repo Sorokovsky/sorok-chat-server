@@ -1,7 +1,10 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { UsersService } from "../users/users.service";
 import { CreateUserDtoWithoutAvatar } from "../../core/contracts/dto/user/create-user.dto";
-import { GetUserDto } from "../../core/contracts/dto/user/get-user.dto";
+import {
+  GetUserDto,
+  GetUserDtoWithPassword,
+} from "../../core/contracts/dto/user/get-user.dto";
 import { TokensService } from "../tokens/tokens.service";
 import { TokensDto } from "../../core/contracts/dto/tokens.dto";
 import { CookiesService } from "../cookies/cookies.service";
@@ -12,6 +15,9 @@ import {
 import { BearerStorageService } from "../bearer-storage/bearer-storage.service";
 import { request, Request, Response } from "express";
 import { TokenPayload } from "../../core/contracts/token-payload";
+import { LoginDto } from "../../core/contracts/dto/auth/login.dto";
+import { PasswordService } from "../password/password.service";
+import { INVALID_PASSWORD_MESSAGE } from "../../core/constants/messages.constant";
 
 @Injectable()
 export class AuthService {
@@ -20,6 +26,7 @@ export class AuthService {
     private readonly tokensService: TokensService,
     private readonly cookiesService: CookiesService,
     private readonly bearerStorageService: BearerStorageService,
+    private readonly passwordService: PasswordService,
   ) {}
 
   public async register(
@@ -55,6 +62,29 @@ export class AuthService {
     return await this.processToken(response, refreshToken);
   }
 
+  public async logout(response: Response): Promise<void> {
+    await this.cookiesService.deleteCookie(response, REFRESH_TOKEN_NAME);
+    this.bearerStorageService.deleteToken(response);
+  }
+
+  public async login(response: Response, loginDto: LoginDto): Promise<void> {
+    const candidate: GetUserDtoWithPassword =
+      (await this.usersService.getByEmail(
+        loginDto.email,
+        true,
+        true,
+      )) as GetUserDtoWithPassword;
+    const isPasswordValid: boolean = await this.passwordService.isValidPassword(
+      loginDto.password,
+      candidate.password,
+    );
+    if (isPasswordValid === false) {
+      throw new BadRequestException(INVALID_PASSWORD_MESSAGE);
+    } else {
+      await this.authenticate(response, candidate);
+    }
+  }
+
   private async authenticate(
     response: Response,
     user: GetUserDto,
@@ -78,11 +108,6 @@ export class AuthService {
     } catch {
       return null;
     }
-  }
-
-  public async logout(response: Response): Promise<void> {
-    await this.cookiesService.deleteCookie(response, REFRESH_TOKEN_NAME);
-    this.bearerStorageService.deleteToken(response);
   }
 
   private async processToken(

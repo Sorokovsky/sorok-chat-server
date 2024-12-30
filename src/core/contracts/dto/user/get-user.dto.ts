@@ -25,3 +25,8 @@ export class GetUserDto {
   @ApiProperty({ default: "1\\images\\avatar.png" })
   public avatarPath: string;
 }
+
+export class GetUserDtoWithPassword extends GetUserDto {
+  @ApiProperty({ default: "password" })
+  public password: string;
+}

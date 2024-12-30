@@ -7,7 +7,10 @@ import { UserAlreadyExists } from "../../core/exceptions/user/user-already-exist
 import { FilesService } from "../files/files.service";
 import { join } from "node:path";
 import { MEDIA_FOLDER_NAME } from "../../core/constants/default.constant";
-import { GetUserDto } from "../../core/contracts/dto/user/get-user.dto";
+import {
+  GetUserDto,
+  GetUserDtoWithPassword,
+} from "../../core/contracts/dto/user/get-user.dto";
 import { UpdateUserDtoWithoutAvatar } from "../../core/contracts/dto/user/update-user.dto";
 import { ColumnMetadata } from "typeorm/metadata/ColumnMetadata";
 import { UserNotFoundException } from "../../core/exceptions/user/user-not-found.exception";
@@ -25,8 +28,12 @@ export class UsersService {
   public async getByEmail(
     email: string,
     notFoundError: boolean = false,
-  ): Promise<GetUserDto | null> {
-    const user: GetUserDto = await this.getBy({ email });
+    withPassword: boolean = false,
+  ): Promise<GetUserDto | GetUserDtoWithPassword | null> {
+    const user: GetUserDto | GetUserDtoWithPassword = await this.getBy(
+      { email },
+      withPassword,
+    );
     if (user === null && notFoundError) {
       throw new UserNotFoundException("email", email);
     }
@@ -36,8 +43,12 @@ export class UsersService {
   public async getById(
     id: number,
     notFoundError: boolean = false,
-  ): Promise<GetUserDto | null> {
-    const user: GetUserDto = await this.getBy({ id });
+    withPassword: boolean = false,
+  ): Promise<GetUserDto | GetUserDtoWithPassword | null> {
+    const user: GetUserDto | GetUserDtoWithPassword = await this.getBy(
+      { id },
+      withPassword,
+    );
     if (user === null && notFoundError) {
       throw new UserNotFoundException("id", id);
     }
@@ -80,20 +91,15 @@ export class UsersService {
     newest: UpdateUserDtoWithoutAvatar,
     avatar?: Express.Multer.File,
   ): Promise<GetUserDto> {
-    const columns: (keyof UserEntity)[] = this.getColumnsName();
-    let candidate: UserEntity | null = await this.repository.findOne({
-      where: {
-        id,
-      },
-      select: columns,
-    });
-    if (candidate === null) {
-      throw new UserNotFoundException("id", id);
-    }
+    let candidate: GetUserDtoWithPassword | null = (await this.getById(
+      id,
+      true,
+      true,
+    )) as GetUserDtoWithPassword;
     if (newest.password) {
       newest.password = await this.passwordService.hash(newest.password);
     }
-    candidate = this.repository.merge(candidate, newest);
+    candidate = this.repository.merge(candidate as UserEntity, newest);
     if (avatar) {
       candidate.avatarPath = await this.uploadAvatar(avatar, `${candidate.id}`);
     }
@@ -119,8 +125,16 @@ export class UsersService {
 
   private async getBy(
     findOptions: FindOptionsWhere<UserEntity>,
+    withPassword: boolean = false,
   ): Promise<GetUserDto | null> {
-    return await this.repository.findOneBy(findOptions);
+    const user: UserEntity | null = await this.repository.findOne({
+      where: findOptions,
+      select: this.getColumnsName(),
+    });
+    if (user !== null && withPassword === false) {
+      delete user["password"];
+    }
+    return user;
   }
 
   private getColumnsName(): (keyof UserEntity)[] {

@@ -12,3 +12,4 @@ export const getAlreadyExistsMessage = (
   key: string,
   value: object,
 ) => `${entity} by ${key} == ${value} already exists.`;
+export const INVALID_PASSWORD_MESSAGE = "Invalid password.";

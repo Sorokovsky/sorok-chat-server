@@ -4,6 +4,7 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Patch,
   Post,
   Res,
   UploadedFile,
@@ -26,6 +27,7 @@ import {
 } from "../../core/contracts/dto/user/create-user.dto";
 import { Response } from "express";
 import { Auth } from "../../core/decorators/auth.decorator";
+import { LoginDto } from "../../core/contracts/dto/auth/login.dto";
 
 @Controller("auth")
 export class AuthController {
@@ -64,5 +66,21 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<void> {
     return await this.authService.logout(response);
+  }
+
+  @Patch("login")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: "Logged in successfully",
+  })
+  @ApiBadRequestResponse({
+    description: "Bad request",
+    type: ErrorDto,
+  })
+  public async login(
+    @Res({ passthrough: true }) response: Response,
+    @Body() loginDto: LoginDto,
+  ): Promise<void> {
+    return await this.authService.login(response, loginDto);
   }
 }
