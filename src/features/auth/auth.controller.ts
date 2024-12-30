@@ -18,6 +18,7 @@ import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiNoContentResponse,
+  ApiNotFoundResponse,
 } from "@nestjs/swagger";
 import { ErrorDto } from "../../core/contracts/dto/error.dto";
 import {
@@ -67,6 +68,14 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({
     description: "Logged in successfully",
+  })
+  @ApiNotFoundResponse({
+    description: "User not found",
+    type: ErrorDto,
+  })
+  @ApiBadRequestResponse({
+    description: "Wrong password",
+    type: ErrorDto,
   })
   public async login(
     @Res({ passthrough: true }) response: Response,
