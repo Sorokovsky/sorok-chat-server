@@ -7,10 +7,7 @@ import { UserAlreadyExists } from "../../core/exceptions/user/user-already-exist
 import { FilesService } from "../files/files.service";
 import { join } from "node:path";
 import { MEDIA_FOLDER_NAME } from "../../core/constants/default.constant";
-import {
-  GetUserDto,
-  GetUserDtoWithPassword,
-} from "../../core/contracts/dto/user/get-user.dto";
+import { GetUserDto, GetUserDtoWithPassword } from "../../core/contracts/dto/user/get-user.dto";
 import { UpdateUserDtoWithoutAvatar } from "../../core/contracts/dto/user/update-user.dto";
 import { ColumnMetadata } from "typeorm/metadata/ColumnMetadata";
 import { UserNotFoundException } from "../../core/exceptions/user/user-not-found.exception";
@@ -108,8 +105,7 @@ export class UsersService {
     } catch {
       throw new UserAlreadyExists("email", candidate.email);
     }
-    delete candidate["password"];
-    return candidate;
+    return (await this.getById(id, true)) as GetUserDto;
   }
 
   private async uploadAvatar(
@@ -127,19 +123,20 @@ export class UsersService {
     findOptions: FindOptionsWhere<UserEntity>,
     withPassword: boolean = false,
   ): Promise<GetUserDto | null> {
-    const user: UserEntity | null = await this.repository.findOne({
+    return await this.repository.findOne({
       where: findOptions,
-      select: this.getColumnsName(),
+      select: this.getColumnsName(withPassword),
     });
-    if (user !== null && withPassword === false) {
-      delete user["password"];
-    }
-    return user;
   }
 
-  private getColumnsName(): (keyof UserEntity)[] {
-    return this.repository.metadata.columns.map(
+  private getColumnsName(withPassword: boolean = false): (keyof UserEntity)[] {
+    const password: keyof UserEntity = "password";
+    let columns: (keyof UserEntity)[] = this.repository.metadata.columns.map(
       (col: ColumnMetadata): string => col.propertyName,
     ) as (keyof UserEntity)[];
+    if (withPassword === false) {
+      columns = columns.filter((col: string): boolean => col !== password);
+    }
+    return columns;
   }
 }
