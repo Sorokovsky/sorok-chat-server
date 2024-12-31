@@ -13,6 +13,7 @@ import { getJwtConfig } from "@configs/jwt.config";
 import { TokensModule } from "@features/tokens/tokens.module";
 import { CookiesModule } from "@features/cookies/cookies.module";
 import { BearerStorageModule } from "@features/bearer-storage/bearer-storage.module";
+import { ChannelsModule } from './features/channels/channels.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { BearerStorageModule } from "@features/bearer-storage/bearer-storage.mod
     TokensModule,
     CookiesModule,
     BearerStorageModule,
+    ChannelsModule,
   ],
   providers: [ConsoleLogger],
 })

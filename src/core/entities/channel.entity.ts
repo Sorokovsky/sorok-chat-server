@@ -32,7 +32,10 @@ export class ChannelEntity extends BaseEntity {
   @Column({ name: "avatar_path", default: DEFAULT_AVATAR_PATH, nullable: true })
   public avatarPath: string;
 
-  @ManyToMany(() => UserEntity, (user) => user.channels, { eager: true })
+  @ManyToMany(() => UserEntity, (user) => user.channels, {
+    eager: true,
+    cascade: true,
+  })
   @JoinTable({
     name: "channels_members",
     joinColumn: { name: "channel_id", referencedColumnName: "id" },
@@ -40,7 +43,10 @@ export class ChannelEntity extends BaseEntity {
   })
   public members: UserEntity[];
 
-  @OneToMany(() => MessageEntity, (message) => message.channel, { eager: true })
+  @OneToMany(() => MessageEntity, (message) => message.channel, {
+    eager: true,
+    cascade: true,
+  })
   @JoinColumn()
   public messages: MessageEntity[];
 }

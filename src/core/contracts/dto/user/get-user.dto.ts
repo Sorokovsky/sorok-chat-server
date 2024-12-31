@@ -1,15 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { BaseGetDto } from "@contracts/dto/base-get.dto";
 
-export class GetUserDto {
-  @ApiProperty({ default: 1 })
-  public id: number;
-
-  @ApiProperty({ default: Date.now() })
-  public createdAt: Date;
-
-  @ApiProperty({ default: Date.now() })
-  public updatedAt: Date;
-
+export class GetUserDto extends BaseGetDto {
   @ApiProperty({ default: "Sorokovskys@ukr.net" })
   public email: string;
 
