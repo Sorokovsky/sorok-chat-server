@@ -55,8 +55,7 @@ export class ChannelsService {
       avatar,
       image,
     );
-    newChannel = this.repository.merge(newChannel, withFiles);
-    newChannel = await this.repository.save(newChannel);
+    newChannel = await this.repository.merge(newChannel, withFiles).save();
     return await this.connectUser(userId, newChannel.id);
   }
 
