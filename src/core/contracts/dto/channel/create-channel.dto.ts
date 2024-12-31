@@ -13,9 +13,14 @@ export class CreateChannelDto {
 
   @ApiProperty({ type: "string", format: "binary", required: false })
   @IsOptional()
-  public avatar: Express.Multer.File;
+  public avatar?: Express.Multer.File;
+
+  @ApiProperty({ type: "string", format: "binary", required: false })
+  @IsOptional()
+  public image?: Express.Multer.File;
 }
 
-export class CreateChannelDtoWithoutAvatar extends OmitType(CreateChannelDto, [
+export class CreateChannelDtoWithoutFiles extends OmitType(CreateChannelDto, [
   "avatar",
+  "image",
 ]) {}
