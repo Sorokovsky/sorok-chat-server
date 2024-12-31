@@ -12,6 +12,9 @@ export class GetChannelDto extends BaseGetDto {
   @ApiProperty({ default: "channels\\1\\images\\avatar.png" })
   public avatarPath: string;
 
+  @ApiProperty({ default: "channels\\1\\images\\avatar.png" })
+  public imagePath: string;
+
   @ApiProperty({ type: [GetUserDto] })
   members: GetUserDto[];
 }

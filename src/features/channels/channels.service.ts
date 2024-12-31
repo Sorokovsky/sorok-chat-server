@@ -6,8 +6,6 @@ import { Repository } from "typeorm";
 import { CreateChannelDtoWithoutAvatar } from "@contracts/dto/channel/create-channel.dto";
 import { FilesService } from "@features/files/files.service";
 import { join } from "node:path";
-import { UsersService } from "@features/users/users.service";
-import { GetUserDto } from "@contracts/dto/user/get-user.dto";
 import { UserEntity } from "@entities/user.entity";
 
 @Injectable()
@@ -16,7 +14,6 @@ export class ChannelsService {
     @InjectRepository(ChannelEntity)
     private readonly repository: Repository<ChannelEntity>,
     private readonly filesService: FilesService,
-    private readonly usersService: UsersService,
   ) {}
 
   public async getChannels(userId: number): Promise<GetChannelDto[]> {
@@ -36,7 +33,6 @@ export class ChannelsService {
   ): Promise<GetChannelDto> {
     let newChannel: ChannelEntity = this.repository.create({
       ...channel,
-      members: [],
     });
     if (avatar) {
       newChannel.avatarPath = await this.uploadAvatar(
@@ -45,14 +41,7 @@ export class ChannelsService {
       );
     }
     newChannel = await this.repository.save(newChannel);
-    const user: UserEntity = (await this.usersService.getById(
-      userId,
-      false,
-      true,
-    )) as UserEntity;
-    newChannel.members = [...newChannel.members, user];
-    await this.repository.save(newChannel);
-    return newChannel;
+    return await this.connectUser(userId, newChannel.id);
   }
 
   private async uploadAvatar(
@@ -65,5 +54,22 @@ export class ChannelsService {
       "avatar",
       true,
     );
+  }
+
+  public async connectUser(
+    userId: number,
+    channelId: number,
+  ): Promise<GetChannelDto> {
+    const channel: ChannelEntity = await this.repository.findOne({
+      where: {
+        id: channelId,
+      },
+    });
+    channel.members.push({ id: userId } as UserEntity);
+    await this.repository.save(channel);
+    return await this.repository.findOne({
+      where: { id: channelId },
+      loadEagerRelations: true,
+    });
   }
 }

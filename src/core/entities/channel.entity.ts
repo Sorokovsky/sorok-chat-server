@@ -34,7 +34,6 @@ export class ChannelEntity extends BaseEntity {
 
   @ManyToMany(() => UserEntity, (user) => user.channels, {
     eager: true,
-    cascade: true,
   })
   @JoinTable({
     name: "channels_members",
@@ -45,7 +44,6 @@ export class ChannelEntity extends BaseEntity {
 
   @OneToMany(() => MessageEntity, (message) => message.channel, {
     eager: true,
-    cascade: true,
   })
   @JoinColumn()
   public messages: MessageEntity[];

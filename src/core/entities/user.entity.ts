@@ -36,14 +36,8 @@ export class UserEntity extends BaseEntity {
   public avatarPath: string;
 
   @ManyToMany(() => ChannelEntity, (channel) => channel.members)
-  @JoinTable({
-    name: "channels_members",
-    joinColumn: { name: "member_id", referencedColumnName: "id" },
-    inverseJoinColumn: { name: "channel_id", referencedColumnName: "id" },
-  })
   public channels: ChannelEntity[];
 
   @OneToMany(() => MessageEntity, (message) => message.channel)
-  @JoinColumn()
   public messages: MessageEntity[];
 }
