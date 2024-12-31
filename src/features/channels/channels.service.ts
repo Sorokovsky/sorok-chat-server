@@ -8,6 +8,7 @@ import { FilesService } from "@features/files/files.service";
 import { join } from "node:path";
 import { UserEntity } from "@entities/user.entity";
 import { ChannelNotFoundException } from "@exceptions/channel/channel-not-found.exception";
+import { MEDIA_FOLDER_NAME } from "@constants/default.constant";
 
 @Injectable()
 export class ChannelsService {
@@ -75,7 +76,7 @@ export class ChannelsService {
   ): Promise<string> {
     return await this.filesService.upload(
       avatar,
-      join("channels", channelFolder, `images`),
+      join("channels", channelFolder, MEDIA_FOLDER_NAME),
       "avatar",
       true,
     );
@@ -87,7 +88,7 @@ export class ChannelsService {
   ): Promise<string> {
     return await this.filesService.upload(
       background,
-      join("channels", channelFolder, `images`),
+      join("channels", channelFolder, MEDIA_FOLDER_NAME),
       "background",
       true,
     );
