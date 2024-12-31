@@ -3,10 +3,7 @@ import { GetChannelDto } from "@contracts/dto/channel/get-channel.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ChannelEntity } from "@entities/channel.entity";
 import { Repository } from "typeorm";
-import {
-  CreateChannelDto,
-  CreateChannelDtoWithoutFiles,
-} from "@contracts/dto/channel/create-channel.dto";
+import { CreateChannelDtoWithoutFiles } from "@contracts/dto/channel/create-channel.dto";
 import { FilesService } from "@features/files/files.service";
 import { join } from "node:path";
 import { UserEntity } from "@entities/user.entity";
