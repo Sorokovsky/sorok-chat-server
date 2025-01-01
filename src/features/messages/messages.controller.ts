@@ -38,7 +38,6 @@ export class MessagesController {
     description: "Found",
   })
   public async getByChat(
-    @CurrentUser("id", new ParseIntPipe()) userId: number,
     @Param("chatId", new ParseIntPipe()) chatId: number,
   ): Promise<GetMessageDto[]> {
     return await this.messagesService.getByChat(chatId);
