@@ -84,6 +84,23 @@ export class ChannelsController {
   }
 
   @Auth()
+  @Patch("connect-self/:chatId")
+  @ApiOkResponse({
+    type: GetChannelDto,
+    description: "Connected successfully",
+  })
+  @ApiNotFoundResponse({
+    description: "Channel not found",
+    type: ErrorDto,
+  })
+  public async connectSelfUser(
+    @CurrentUser("id") userId: number,
+    @Param("chatId") chatId: number,
+  ): Promise<GetChannelDto> {
+    return await this.channelsService.connectUser(userId, chatId);
+  }
+
+  @Auth()
   @Patch("disconnect/:userId/:chatId")
   @ApiOkResponse({
     type: GetChannelDto,
@@ -94,9 +111,26 @@ export class ChannelsController {
     type: ErrorDto,
   })
   public async disconnectUser(
-    @Param("userId") user: number,
+    @Param("userId") userId: number,
     @Param("chatId") chatId: number,
   ): Promise<GetChannelDto> {
-    return await this.channelsService.disconnectUser(user, chatId);
+    return await this.channelsService.disconnectUser(userId, chatId);
+  }
+
+  @Auth()
+  @Patch("disconnect-self/:chatId")
+  @ApiOkResponse({
+    type: GetChannelDto,
+    description: "Connected successfully",
+  })
+  @ApiNotFoundResponse({
+    description: "Channel not found",
+    type: ErrorDto,
+  })
+  public async disconnectSelfUser(
+    @CurrentUser("id") userId: number,
+    @Param("chatId") chatId: number,
+  ): Promise<GetChannelDto> {
+    return await this.channelsService.disconnectUser(userId, chatId);
   }
 }
