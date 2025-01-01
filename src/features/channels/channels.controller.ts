@@ -2,13 +2,19 @@ import {
   Body,
   Controller,
   Get,
+  Param,
+  Patch,
   Post,
   UploadedFiles,
   UseInterceptors,
 } from "@nestjs/common";
 import { ChannelsService } from "@features/channels/channels.service";
 import { Auth } from "@decorators/auth.decorator";
-import { ApiCreatedResponse, ApiOkResponse } from "@nestjs/swagger";
+import {
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+} from "@nestjs/swagger";
 import { GetChannelDto } from "@contracts/dto/channel/get-channel.dto";
 import { CurrentUser } from "@decorators/current-user.decorator";
 import {
@@ -17,6 +23,7 @@ import {
 } from "@contracts/dto/channel/create-channel.dto";
 import { SwaggerFile } from "@decorators/swagger-file.decorator";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
+import { ErrorDto } from "@contracts/dto/error.dto";
 
 @Controller("channels")
 export class ChannelsController {
@@ -57,5 +64,39 @@ export class ChannelsController {
       files.avatar?.[0],
       files.image?.[0],
     );
+  }
+
+  @Auth()
+  @Patch("connect/:userId/:chatId")
+  @ApiOkResponse({
+    type: GetChannelDto,
+    description: "Connected successfully",
+  })
+  @ApiNotFoundResponse({
+    description: "Channel not found",
+    type: ErrorDto,
+  })
+  public async connectUser(
+    @Param("userId") userId: number,
+    @Param("chatId") chatId: number,
+  ): Promise<GetChannelDto> {
+    return await this.channelsService.connectUser(userId, chatId);
+  }
+
+  @Auth()
+  @Patch("disconnect/:userId/:chatId")
+  @ApiOkResponse({
+    type: GetChannelDto,
+    description: "Connected successfully",
+  })
+  @ApiNotFoundResponse({
+    description: "Channel not found",
+    type: ErrorDto,
+  })
+  public async disconnectUser(
+    @Param("userId") user: number,
+    @Param("chatId") chatId: number,
+  ): Promise<GetChannelDto> {
+    return await this.channelsService.disconnectUser(user, chatId);
   }
 }

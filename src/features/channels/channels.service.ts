@@ -70,6 +70,18 @@ export class ChannelsService {
     return await this.getById(channelId, true);
   }
 
+  public async disconnectUser(
+    userId: number,
+    channelId: number,
+  ): Promise<GetChannelDto> {
+    const channel: GetChannelDto = await this.getById(channelId, true);
+    channel.members = channel.members.filter(
+      (member: UserEntity): boolean => member.id !== userId,
+    );
+    await this.repository.save(channel);
+    return await this.getById(channelId, true);
+  }
+
   private async uploadAvatar(
     avatar: Express.Multer.File,
     channelFolder: string,
