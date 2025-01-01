@@ -17,6 +17,7 @@ export class MessagesService {
       where: {
         channel: { id: channelId },
       },
+      loadEagerRelations: true,
     });
   }
 

@@ -1,6 +1,13 @@
-import { Body, Controller, Param, ParseIntPipe, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+} from "@nestjs/common";
 import { MessagesService } from "@features/messages/messages.service";
-import { ApiCreatedResponse } from "@nestjs/swagger";
+import { ApiCreatedResponse, ApiOkResponse } from "@nestjs/swagger";
 import { GetMessageDto } from "@contracts/dto/message/get-message.dto";
 import { Auth } from "@decorators/auth.decorator";
 import { CurrentUser } from "@decorators/current-user.decorator";
@@ -22,5 +29,18 @@ export class MessagesController {
     @Body() message: CreateMessageDto,
   ): Promise<GetMessageDto> {
     return await this.messagesService.create(userId, chatId, message);
+  }
+
+  @Auth()
+  @Get(":chatId")
+  @ApiOkResponse({
+    type: GetMessageDto,
+    description: "Found",
+  })
+  public async getByChat(
+    @CurrentUser("id", new ParseIntPipe()) userId: number,
+    @Param("chatId", new ParseIntPipe()) chatId: number,
+  ): Promise<GetMessageDto[]> {
+    return await this.messagesService.getByChat(chatId);
   }
 }
