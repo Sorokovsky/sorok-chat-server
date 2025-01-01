@@ -78,10 +78,8 @@ export class UsersService {
   }
 
   public async delete(id: number): Promise<GetUserDto> {
-    const user: GetUserDto = await this.getById(id);
-    if (user === null) {
-      throw new UserAlreadyExists("id", id);
-    }
+    const user: GetUserDto = await this.getById(id, true);
+    await this.filesService.delete(join("users", `${user.id}`), false);
     await this.repository.delete(id);
     return user;
   }

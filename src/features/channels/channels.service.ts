@@ -108,6 +108,7 @@ export class ChannelsService {
 
   public async delete(id: number): Promise<GetChannelDto> {
     const channel: GetChannelDto = await this.getById(id, true);
+    await this.filesService.delete(join("channels", `${channel.id}`), false);
     await this.repository.delete(id);
     return channel;
   }

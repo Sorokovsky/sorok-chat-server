@@ -1,12 +1,5 @@
 import { BaseEntity } from "./base.entity";
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  OneToMany,
-} from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from "typeorm";
 import {
   DEFAULT_AVATAR_PATH,
   DEFAULT_CHANNEL_IMAGE_PATH,
@@ -45,6 +38,10 @@ export class ChannelEntity extends BaseEntity {
   @OneToMany(() => MessageEntity, (message) => message.channel, {
     eager: true,
   })
-  @JoinColumn()
+  @JoinTable({
+    name: "channels_messages",
+    joinColumn: { name: "channel_id", referencedColumnName: "id" },
+    inverseJoinColumn: { name: "message_id", referencedColumnName: "id" },
+  })
   public messages: MessageEntity[];
 }

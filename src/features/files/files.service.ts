@@ -31,13 +31,15 @@ export class FilesService {
     return resultPath;
   }
 
-  public async delete(path: string): Promise<void> {
+  public async delete(path: string, withError: boolean = true): Promise<void> {
     const serverPath: string = join(SERVER_FOLDER, path);
     const isPathExists: boolean = await this.isPathExists(serverPath);
-    if (isPathExists === false) {
+    if (isPathExists === false && withError) {
       throw new PathNotFoundException(path);
     }
-    return await rm(serverPath, { force: true });
+    if (isPathExists) {
+      return await rm(serverPath, { force: true, recursive: true });
+    }
   }
 
   private getExtension(fileFullName: string): string {
