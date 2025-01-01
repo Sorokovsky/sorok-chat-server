@@ -3,8 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -16,7 +14,6 @@ import { ChannelsService } from "@features/channels/channels.service";
 import { Auth } from "@decorators/auth.decorator";
 import {
   ApiCreatedResponse,
-  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
 } from "@nestjs/swagger";
@@ -175,8 +172,7 @@ export class ChannelsController {
   }
 
   @Delete(":id")
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiNoContentResponse({ description: "Deleted successfully" })
+  @ApiOkResponse({ description: "Deleted successfully", type: GetChannelDto })
   @ApiNotFoundResponse({
     description: "Not found",
     type: ErrorDto,
