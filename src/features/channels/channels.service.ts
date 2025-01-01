@@ -9,6 +9,7 @@ import { join } from "node:path";
 import { UserEntity } from "@entities/user.entity";
 import { ChannelNotFoundException } from "@exceptions/channel/channel-not-found.exception";
 import { MEDIA_FOLDER_NAME } from "@constants/default.constant";
+import { UpdateChannelDtoWithoutFiles } from "@contracts/dto/channel/update-channel.dto";
 
 @Injectable()
 export class ChannelsService {
@@ -80,6 +81,26 @@ export class ChannelsService {
     );
     await this.repository.save(channel);
     return await this.getById(channelId, true);
+  }
+
+  public async update(
+    id: number,
+    channel: UpdateChannelDtoWithoutFiles,
+    avatar?: Express.Multer.File,
+    image?: Express.Multer.File,
+  ): Promise<GetChannelDto> {
+    const oldChannel: GetChannelDto = await this.getById(id, true);
+    const withFiles: ChannelEntity = await this.processFiles(id, avatar, image);
+    await this.repository
+      .merge(oldChannel as ChannelEntity, channel, withFiles)
+      .save();
+    return await this.getById(id, true);
+  }
+
+  public async delete(id: number): Promise<GetChannelDto> {
+    const channel: GetChannelDto = await this.getById(id, true);
+    await this.repository.delete(id);
+    return channel;
   }
 
   private async uploadAvatar(

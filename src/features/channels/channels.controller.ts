@@ -1,8 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   UploadedFiles,
@@ -12,6 +16,7 @@ import { ChannelsService } from "@features/channels/channels.service";
 import { Auth } from "@decorators/auth.decorator";
 import {
   ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
 } from "@nestjs/swagger";
@@ -24,6 +29,10 @@ import {
 import { SwaggerFile } from "@decorators/swagger-file.decorator";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { ErrorDto } from "@contracts/dto/error.dto";
+import {
+  UpdateChannelDto,
+  UpdateChannelDtoWithoutFiles,
+} from "@contracts/dto/channel/update-channel.dto";
 
 @Controller("channels")
 export class ChannelsController {
@@ -77,8 +86,8 @@ export class ChannelsController {
     type: ErrorDto,
   })
   public async connectUser(
-    @Param("userId") userId: number,
-    @Param("chatId") chatId: number,
+    @Param("userId", new ParseIntPipe()) userId: number,
+    @Param("chatId", new ParseIntPipe()) chatId: number,
   ): Promise<GetChannelDto> {
     return await this.channelsService.connectUser(userId, chatId);
   }
@@ -95,7 +104,7 @@ export class ChannelsController {
   })
   public async connectSelfUser(
     @CurrentUser("id") userId: number,
-    @Param("chatId") chatId: number,
+    @Param("chatId", new ParseIntPipe()) chatId: number,
   ): Promise<GetChannelDto> {
     return await this.channelsService.connectUser(userId, chatId);
   }
@@ -111,8 +120,8 @@ export class ChannelsController {
     type: ErrorDto,
   })
   public async disconnectUser(
-    @Param("userId") userId: number,
-    @Param("chatId") chatId: number,
+    @Param("userId", new ParseIntPipe()) userId: number,
+    @Param("chatId", new ParseIntPipe()) chatId: number,
   ): Promise<GetChannelDto> {
     return await this.channelsService.disconnectUser(userId, chatId);
   }
@@ -129,8 +138,52 @@ export class ChannelsController {
   })
   public async disconnectSelfUser(
     @CurrentUser("id") userId: number,
-    @Param("chatId") chatId: number,
+    @Param("chatId", new ParseIntPipe()) chatId: number,
   ): Promise<GetChannelDto> {
     return await this.channelsService.disconnectUser(userId, chatId);
+  }
+
+  @Auth()
+  @Patch(":id")
+  @SwaggerFile(UpdateChannelDto)
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: "avatar", maxCount: 1 },
+      { name: "image", maxCount: 1 },
+    ]),
+  )
+  @ApiOkResponse({
+    type: GetChannelDto,
+    description: "Updated successfully",
+  })
+  @ApiNotFoundResponse({
+    description: "Not found",
+    type: ErrorDto,
+  })
+  public async update(
+    @Param("id", new ParseIntPipe()) id: number,
+    @Body() channel: UpdateChannelDtoWithoutFiles,
+    @UploadedFiles()
+    files: { avatar?: Express.Multer.File[]; image?: Express.Multer.File[] },
+  ): Promise<GetChannelDto> {
+    return await this.channelsService.update(
+      id,
+      channel,
+      files.avatar?.[0],
+      files.image?.[0],
+    );
+  }
+
+  @Delete(":id")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: "Deleted successfully" })
+  @ApiNotFoundResponse({
+    description: "Not found",
+    type: ErrorDto,
+  })
+  public async delete(
+    @Param("id", new ParseIntPipe()) id: number,
+  ): Promise<GetChannelDto> {
+    return await this.channelsService.delete(id);
   }
 }
