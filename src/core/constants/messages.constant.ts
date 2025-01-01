@@ -16,3 +16,4 @@ export const getAlreadyExistsMessage = (
   value: object,
 ) => `${entity} by ${key} == ${value} already exists.`;
 export const INVALID_PASSWORD_MESSAGE = "Invalid password.";
+export const USER_ALREADY_IN_THIS_CHAT_MESSAGE = "User already in this chat.";

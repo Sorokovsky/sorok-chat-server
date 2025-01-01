@@ -13,6 +13,7 @@ import {
 import { ChannelsService } from "@features/channels/channels.service";
 import { Auth } from "@decorators/auth.decorator";
 import {
+  ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -82,6 +83,10 @@ export class ChannelsController {
     description: "Channel not found",
     type: ErrorDto,
   })
+  @ApiBadRequestResponse({
+    description: "User already connected",
+    type: ErrorDto,
+  })
   public async connectUser(
     @Param("userId", new ParseIntPipe()) userId: number,
     @Param("chatId", new ParseIntPipe()) chatId: number,
@@ -94,6 +99,10 @@ export class ChannelsController {
   @ApiOkResponse({
     type: GetChannelDto,
     description: "Connected successfully",
+  })
+  @ApiBadRequestResponse({
+    description: "User already connected",
+    type: ErrorDto,
   })
   @ApiNotFoundResponse({
     description: "Channel not found",

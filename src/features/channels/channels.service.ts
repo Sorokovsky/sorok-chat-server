@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { GetChannelDto } from "@contracts/dto/channel/get-channel.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ChannelEntity } from "@entities/channel.entity";
@@ -10,6 +10,8 @@ import { UserEntity } from "@entities/user.entity";
 import { ChannelNotFoundException } from "@exceptions/channel/channel-not-found.exception";
 import { MEDIA_FOLDER_NAME } from "@constants/default.constant";
 import { UpdateChannelDtoWithoutFiles } from "@contracts/dto/channel/update-channel.dto";
+import { GetUserDto } from "@contracts/dto/user/get-user.dto";
+import { USER_ALREADY_IN_THIS_CHAT_MESSAGE } from "@constants/messages.constant";
 
 @Injectable()
 export class ChannelsService {
@@ -66,6 +68,13 @@ export class ChannelsService {
     channelId: number,
   ): Promise<GetChannelDto> {
     const channel: GetChannelDto = await this.getById(channelId, true);
+    if (
+      channel.members.find(
+        (member: GetUserDto): boolean => member.id === userId,
+      ) !== undefined
+    ) {
+      throw new BadRequestException(USER_ALREADY_IN_THIS_CHAT_MESSAGE);
+    }
     channel.members.push({ id: userId } as UserEntity);
     await this.repository.save(channel);
     return await this.getById(channelId, true);
