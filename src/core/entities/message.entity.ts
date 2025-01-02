@@ -8,7 +8,7 @@ export class MessageEntity extends BaseEntity {
   @Column()
   public text: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.messages, { eager: true })
+  @ManyToOne(() => UserEntity, (user) => user.messages, { eager: true, onDelete: "CASCADE", })
   @JoinColumn({ name: "author_id" })
   public author: UserEntity;
 

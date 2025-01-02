@@ -27,6 +27,7 @@ export class ChannelEntity extends BaseEntity {
 
   @ManyToMany(() => UserEntity, (user) => user.channels, {
     eager: true,
+    onDelete: "CASCADE"
   })
   @JoinTable({
     name: "channels_members",

@@ -35,9 +35,9 @@ export class UserEntity extends BaseEntity {
   })
   public avatarPath: string;
 
-  @ManyToMany(() => ChannelEntity, (channel) => channel.members)
+  @ManyToMany(() => ChannelEntity, (channel) => channel.members, { onDelete: "CASCADE" })
   public channels: ChannelEntity[];
 
-  @OneToMany(() => MessageEntity, (message) => message.channel)
+  @OneToMany(() => MessageEntity, (message) => message.channel, {onDelete: "CASCADE",})
   public messages: MessageEntity[];
 }

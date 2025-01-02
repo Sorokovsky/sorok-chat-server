@@ -80,7 +80,7 @@ export class UsersService {
   public async delete(id: number): Promise<GetUserDto> {
     const user: GetUserDto = await this.getById(id, true);
     await this.filesService.delete(join("users", `${user.id}`), false);
-    await this.repository.delete(id);
+    await this.repository.delete({ id });
     return user;
   }
 
