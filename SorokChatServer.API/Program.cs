@@ -11,7 +11,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<Database>();
 builder.Services.AddSingleton<IUsersRepository, UsersRepository>();
 builder.Services.AddSingleton<IPasswordService, PasswordService>();
+builder.Services.AddSingleton<IFilesService, FilesService>();
 builder.Services.Configure<HashingOptions>(config.GetSection(HashingOptions.Hashing));
+builder.Services.Configure<FilesOptions>(config.GetSection(FilesOptions.Files));
 
 var app = builder.Build();
 
