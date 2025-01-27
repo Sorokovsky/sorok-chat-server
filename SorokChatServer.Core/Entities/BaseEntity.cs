@@ -1,9 +1,9 @@
-﻿using CSharpFunctionalExtensions;
+﻿namespace SorokChatServer.Core.Entities;
 
-namespace SorokChatServer.Core.Entities;
-
-public abstract class BaseEntity : Entity<long>
+public abstract class BaseEntity
 {
+    public long Id { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }

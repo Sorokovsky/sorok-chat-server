@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SorokChatServer.Core.Entities;
 using SorokChatServer.Core.Interfaces;
 using SorokChatServer.Core.Models;
+using SorokChatServer.Core.Utils;
 
 namespace SorokChatServer.DataAccess.Repositories;
 
@@ -74,13 +75,24 @@ public class UsersRepository : IUsersRepository
         return Result.Success<List<User>, ApiError>(users);
     }
 
-    public Task<Result<User, ApiError>> Delete(long id, CancellationToken cancellationToken)
+    public async Task<Result<User, ApiError>> Delete(long id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var candidateResult = await GetBy(x => x.Id == id, cancellationToken);
+        if (candidateResult.IsFailure) return candidateResult.Error;
+        await _database.Users
+            .Where(x => x.Id == id)
+            .ExecuteDeleteAsync(cancellationToken);
+        return Result.Success<User, ApiError>(candidateResult.Value);
     }
 
-    public Task<Result<User, ApiError>> Update(long id, UserEntity updatedUser, CancellationToken cancellationToken)
+    public async Task<Result<User, ApiError>> Update(long id, UserEntity updatedUser,
+        CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var candidateResult = await GetBy(x => x.Id == id, cancellationToken);
+        if (candidateResult.IsFailure) return candidateResult.Error;
+        var updatedState = RepositoryUtils.MergeStates(User.ToEntity(candidateResult.Value), updatedUser);
+        _database.Users.Update(updatedState);
+        await _database.SaveChangesAsync(cancellationToken);
+        return User.Create(updatedState);
     }
 }
