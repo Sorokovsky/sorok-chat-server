@@ -9,7 +9,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{39FB84C9-3031-40D7-8F01-2ED7ABF30B29}"
 	ProjectSection(SolutionItems) = preProject
 		compose.yaml = compose.yaml
+		global.json = global.json
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SorokChatServer.Core", "SorokChatServer.Core\SorokChatServer.Core.csproj", "{DE697900-0DDA-4F72-BD34-AF58EC02F396}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,5 +32,12 @@ Global
 		{0E9F8293-4432-4FB2-B14D-7C07EEF061E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E9F8293-4432-4FB2-B14D-7C07EEF061E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E9F8293-4432-4FB2-B14D-7C07EEF061E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE697900-0DDA-4F72-BD34-AF58EC02F396}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE697900-0DDA-4F72-BD34-AF58EC02F396}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE697900-0DDA-4F72-BD34-AF58EC02F396}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE697900-0DDA-4F72-BD34-AF58EC02F396}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DE697900-0DDA-4F72-BD34-AF58EC02F396} = {39FB84C9-3031-40D7-8F01-2ED7ABF30B29}
 	EndGlobalSection
 EndGlobal
