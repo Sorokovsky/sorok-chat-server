@@ -1,0 +1,21 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  server:
+    build:
+      context: "D:\\progects\\sorok-chat\\server"
+      dockerfile: "SorokChatServer.API/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net9.0/SorokChatServer.API.dll"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "sorokchat:dev"
+    ports: []
+    volumes:
+    - "D:\\progects\\sorok-chat\\server\\SorokChatServer.API:/app:rw"
+    - "D:\\progects\\sorok-chat\\server:/src:rw"
+    - "C:\\Users\\Андрей\\.nuget\\packages:/home/app/.nuget/packages"
+    working_dir: "/app"
