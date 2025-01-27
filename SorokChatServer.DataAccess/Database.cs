@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using SorokChatServer.Core.Entities;
 
 namespace SorokChatServer.DataAccess;
 
@@ -11,6 +12,8 @@ public class Database : DbContext
     {
         _configuration = configuration;
     }
+
+    public DbSet<UserEntity> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

@@ -7,7 +7,6 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["SorokChatServer.API/SorokChatServer.API.csproj", "SorokChatServer.API/"]
-COPY ["SorokChatServer.Infrastructure/SorokChatServer.Infrastructure.csproj", "SorokChatServer.Infrastructure/"]
 COPY ["SorokChatServer.DataAccess/SorokChatServer.DataAccess.csproj", "SorokChatServer.DataAccess/"]
 COPY ["SorokChatServer.Core/SorokChatServer.Core.csproj", "SorokChatServer.Core/"]
 RUN dotnet restore "SorokChatServer.API/SorokChatServer.API.csproj"

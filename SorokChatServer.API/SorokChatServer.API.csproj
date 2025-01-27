@@ -34,7 +34,6 @@
     <ItemGroup>
         <ProjectReference Include="..\SorokChatServer.Core\SorokChatServer.Core.csproj"/>
         <ProjectReference Include="..\SorokChatServer.DataAccess\SorokChatServer.DataAccess.csproj"/>
-        <ProjectReference Include="..\SorokChatServer.Infrastructure\SorokChatServer.Infrastructure.csproj"/>
     </ItemGroup>
 
 </Project>
