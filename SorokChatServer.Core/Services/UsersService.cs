@@ -29,11 +29,10 @@ public class UsersService : IUsersService
         var createdUser = await _repository.Create(userResult.Value, cancellationToken);
         if (createdUser.IsFailure) return createdUser.Error;
         var avatarPath = await UploadAvatarIfExists(newUser.avatar, createdUser.Value.Id, cancellationToken);
-        var updated = await _repository.Update(createdUser.Value.Id, new UserEntity
+        return await _repository.Update(createdUser.Value.Id, new UserEntity
         {
             AvatarPath = avatarPath
         }, cancellationToken);
-        return updated;
     }
 
     public Task<Result<User, ApiError>> GetById(long id, CancellationToken cancellationToken)
