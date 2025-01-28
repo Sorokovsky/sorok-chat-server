@@ -35,9 +35,9 @@ public class UsersService : IUsersService
         }, cancellationToken);
     }
 
-    public Task<Result<User, ApiError>> GetById(long id, CancellationToken cancellationToken)
+    public async Task<Result<User, ApiError>> GetById(long id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _repository.GetBy(user => user.Id == id, cancellationToken);
     }
 
     private async Task<string> UploadAvatarIfExists(IFormFile? avatar, long id, CancellationToken cancellationToken)
