@@ -18,7 +18,6 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromForm] CreateUserRequest newUser, CancellationToken cancellationToken)
     {
-        Console.WriteLine(newUser.avatar);
         var createdResult = await _usersService.Create(newUser, cancellationToken);
         if (createdResult.IsFailure)
         {
