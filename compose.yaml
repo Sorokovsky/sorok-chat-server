@@ -5,6 +5,8 @@
     build:
       context: .
       dockerfile: SorokChatServer.API/Dockerfile
+    ports:
+      - "80:8080"
   database: 
     image: postgres:latest
     container_name: database

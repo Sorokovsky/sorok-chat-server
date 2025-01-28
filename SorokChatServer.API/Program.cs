@@ -1,3 +1,4 @@
+using SorokChatServer.Core.Configurations;
 using SorokChatServer.Core.Interfaces;
 using SorokChatServer.Core.Options;
 using SorokChatServer.Core.Services;
@@ -13,15 +14,27 @@ builder.Services.AddSingleton<IUsersRepository, UsersRepository>();
 builder.Services.AddSingleton<IPasswordService, PasswordService>();
 builder.Services.AddSingleton<IFilesService, FilesService>();
 builder.Services.AddSingleton<IUsersService, UsersService>();
+builder.Services.AddSingleton<FilesConfiguration>();
 builder.Services.Configure<HashingOptions>(config.GetSection(HashingOptions.Hashing));
 builder.Services.Configure<FilesOptions>(config.GetSection(FilesOptions.Files));
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddCors();
 
 var app = builder.Build();
+app.UseSwagger();
+app.UseSwaggerUI();
+app.MapOpenApi();
 
-if (app.Environment.IsDevelopment())
+var filesConfiguration = app.Services.GetRequiredService<FilesConfiguration>();
+app.UseStaticFiles(filesConfiguration);
+
+app.UseCors(x =>
 {
-    app.MapOpenApi();
-}
+    x.AllowAnyOrigin();
+    x.AllowAnyMethod();
+    x.AllowAnyHeader();
+});
 
 app.UseHttpsRedirection();
 

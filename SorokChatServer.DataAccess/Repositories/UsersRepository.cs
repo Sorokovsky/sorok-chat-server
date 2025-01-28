@@ -32,6 +32,8 @@ public class UsersRepository : IUsersRepository
             var entity = new UserEntity
             {
                 Email = newUser.Email,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
                 Password = newUser.Password,
                 Surname = newUser.Surname,
                 Name = newUser.Name,
@@ -91,6 +93,10 @@ public class UsersRepository : IUsersRepository
         var candidateResult = await GetBy(x => x.Id == id, cancellationToken);
         if (candidateResult.IsFailure) return candidateResult.Error;
         var updatedState = RepositoryUtils.MergeStates(User.ToEntity(candidateResult.Value), updatedUser);
+        updatedState.UpdatedAt = DateTime.UtcNow;
+        var local = _database.Set<UserEntity>()
+            .Local.FirstOrDefault(x => x.Id == id);
+        if (local is not null) _database.Entry(local).State = EntityState.Detached;
         _database.Users.Update(updatedState);
         await _database.SaveChangesAsync(cancellationToken);
         return User.Create(updatedState);

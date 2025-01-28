@@ -19,6 +19,9 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="9.0.1"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="7.2.0"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -30,6 +33,10 @@
     <ItemGroup>
         <ProjectReference Include="..\SorokChatServer.Core\SorokChatServer.Core.csproj"/>
         <ProjectReference Include="..\SorokChatServer.DataAccess\SorokChatServer.DataAccess.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="uploads\"/>
     </ItemGroup>
 
 </Project>

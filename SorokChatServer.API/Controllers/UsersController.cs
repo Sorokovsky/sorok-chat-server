@@ -16,8 +16,9 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateUserRequest newUser, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromForm] CreateUserRequest newUser, CancellationToken cancellationToken)
     {
+        Console.WriteLine(newUser.avatar);
         var createdResult = await _usersService.Create(newUser, cancellationToken);
         if (createdResult.IsFailure)
         {
@@ -26,6 +27,17 @@ public class UsersController : ControllerBase
         }
 
         const string uri = "/users/created";
-        return Created(uri, createdResult.Value);
+        var user = createdResult.Value;
+        var response = new UserResponse(
+            user.Id,
+            user.CreatedAt,
+            user.UpdatedAt,
+            user.Email.Value,
+            user.Surname,
+            user.Name,
+            user.MiddleName,
+            user.AvatarPath
+        );
+        return Created(uri, response);
     }
 }
