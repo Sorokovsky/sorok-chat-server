@@ -29,17 +29,7 @@ public class UsersRepository : IUsersRepository
 
         try
         {
-            var entity = new UserEntity
-            {
-                Email = newUser.Email,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                Password = newUser.Password,
-                Surname = newUser.Surname,
-                Name = newUser.Name,
-                MiddleName = newUser.MiddleName,
-                AvatarPath = newUser.AvatarPath
-            };
+            var entity = newUser.ToEntity();
             var createdUser = (await _database.Users.AddAsync(entity, cancellationToken)).Entity;
             await _database.SaveChangesAsync(cancellationToken);
             return User.Create(createdUser);
@@ -92,7 +82,7 @@ public class UsersRepository : IUsersRepository
     {
         var candidateResult = await GetBy(x => x.Id == id, cancellationToken);
         if (candidateResult.IsFailure) return candidateResult.Error;
-        var updatedState = RepositoryUtils.MergeStates(User.ToEntity(candidateResult.Value), updatedUser);
+        var updatedState = RepositoryUtils.MergeStates(candidateResult.Value.ToEntity(), updatedUser);
         updatedState.UpdatedAt = DateTime.UtcNow;
         var local = _database.Set<UserEntity>()
             .Local.FirstOrDefault(x => x.Id == id);

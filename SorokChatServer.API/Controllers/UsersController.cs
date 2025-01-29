@@ -26,18 +26,7 @@ public class UsersController : ControllerBase
         }
 
         const string uri = "/users/created";
-        var user = createdResult.Value;
-        var response = new UserResponse(
-            user.Id,
-            user.CreatedAt,
-            user.UpdatedAt,
-            user.Email.Value,
-            user.Surname,
-            user.Name,
-            user.MiddleName,
-            user.AvatarPath
-        );
-        return Created(uri, response);
+        return Created(uri, createdResult.Value.ToResponse());
     }
 
     [HttpGet("{id:long}")]
@@ -50,16 +39,6 @@ public class UsersController : ControllerBase
             return StatusCode((int)error.StatusCode, error);
         }
 
-        var user = userResult.Value;
-        return Ok(new UserResponse(
-            user.Id,
-            user.CreatedAt,
-            user.UpdatedAt,
-            user.Email.Value,
-            user.Surname,
-            user.Name,
-            user.MiddleName,
-            user.AvatarPath
-        ));
+        return Ok(userResult.Value.ToResponse());
     }
 }
