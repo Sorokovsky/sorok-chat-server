@@ -22,3 +22,6 @@
 volumes:
   pgdata:
     driver: local
+networks:
+  database:
+    driver: bridge
