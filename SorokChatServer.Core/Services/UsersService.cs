@@ -9,9 +9,9 @@ namespace SorokChatServer.Core.Services;
 
 public class UsersService : IUsersService
 {
+    private readonly IFilesService _filesService;
     private readonly IPasswordService _passwordService;
     private readonly IUsersRepository _repository;
-    private readonly IFilesService _filesService;
 
     public UsersService(IPasswordService passwordService, IUsersRepository repository, IFilesService filesService)
     {
@@ -40,9 +40,7 @@ public class UsersService : IUsersService
     private async Task<string> UploadAvatarIfExists(IFormFile? avatar, long id, CancellationToken cancellationToken)
     {
         if (avatar is null) return string.Empty;
-        var folder = $"{id}";
-        var uploadResult = await _filesService.Upload(avatar, folder, nameof(avatar), true, cancellationToken);
-        if (uploadResult.IsFailure) return string.Empty;
-        return uploadResult.Value;
+        var uploadResult = await _filesService.Upload(avatar, id.ToString(), nameof(avatar), true, cancellationToken);
+        return uploadResult.IsFailure ? string.Empty : uploadResult.Value;
     }
 }
