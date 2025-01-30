@@ -22,17 +22,14 @@ public class UsersService : IUsersService
 
     public async Task<Result<User, ApiError>> Create(CreateUserRequest newUser, CancellationToken cancellationToken)
     {
-        var hashedPassword = await _passwordService.Encrypt(newUser.password);
-        newUser = newUser with { password = hashedPassword };
+        newUser = newUser with { password = await _passwordService.Encrypt(newUser.password) };
         var userResult = User.Create(newUser);
-        if (userResult.IsFailure) return userResult.Error;
+        if (userResult.IsFailure) return userResult;
         var createdUser = await _repository.Create(userResult.Value, cancellationToken);
-        if (createdUser.IsFailure) return createdUser.Error;
+        if (createdUser.IsFailure) return createdUser;
         var avatarPath = await UploadAvatarIfExists(newUser.avatar, createdUser.Value.Id, cancellationToken);
-        return await _repository.Update(createdUser.Value.Id, new UserEntity
-        {
-            AvatarPath = avatarPath
-        }, cancellationToken);
+        return await _repository.Update(createdUser.Value.Id, new UserEntity { AvatarPath = avatarPath },
+            cancellationToken);
     }
 
     public async Task<Result<User, ApiError>> GetById(long id, CancellationToken cancellationToken)
