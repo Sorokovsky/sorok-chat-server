@@ -37,10 +37,24 @@ public class UsersService : IUsersService
         return await _repository.GetBy(user => user.Id == id, cancellationToken);
     }
 
+    public async Task<Result<User, ApiError>> Delete(long id, CancellationToken cancellationToken)
+    {
+        var userResult = await GetById(id, cancellationToken);
+        if (userResult.IsFailure) return userResult;
+        await DeleteAvatarIfExists(userResult.Value.AvatarPath, cancellationToken);
+        return await _repository.Delete(id, cancellationToken);
+    }
+
     private async Task<string> UploadAvatarIfExists(IFormFile? avatar, long id, CancellationToken cancellationToken)
     {
         if (avatar is null) return string.Empty;
         var uploadResult = await _filesService.Upload(avatar, id.ToString(), nameof(avatar), true, cancellationToken);
         return uploadResult.IsFailure ? string.Empty : uploadResult.Value;
+    }
+
+    private async Task DeleteAvatarIfExists(string avatarPath, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(avatarPath)) return;
+        await _filesService.Delete(avatarPath, cancellationToken);
     }
 }
