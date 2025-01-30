@@ -1,5 +1,6 @@
 using SorokChatServer.Core.Configurations;
 using SorokChatServer.Core.Interfaces;
+using SorokChatServer.Core.Middlewares;
 using SorokChatServer.Core.Options;
 using SorokChatServer.Core.Services;
 using SorokChatServer.DataAccess;
@@ -15,6 +16,7 @@ builder.Services.AddSingleton<IPasswordService, PasswordService>();
 builder.Services.AddSingleton<IFilesService, FilesService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddSingleton<FilesConfiguration>();
+builder.Services.AddScoped<ErrorHandlerMiddleware>();
 builder.Services.Configure<HashingOptions>(config.GetSection(HashingOptions.Hashing));
 builder.Services.Configure<FilesOptions>(config.GetSection(FilesOptions.Files));
 builder.Services.AddEndpointsApiExplorer();
@@ -35,6 +37,8 @@ app.UseCors(x =>
     x.AllowAnyMethod();
     x.AllowAnyHeader();
 });
+
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 
