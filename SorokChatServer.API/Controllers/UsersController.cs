@@ -41,4 +41,17 @@ public class UsersController : ControllerBase
 
         return Ok(userResult.Value.ToResponse());
     }
+
+    [HttpDelete("{id:long}")]
+    public async Task<IActionResult> Delete([FromRoute] long id, CancellationToken cancellationToken)
+    {
+        var deleteResult = await _usersService.Delete(id, cancellationToken);
+        if (deleteResult.IsFailure)
+        {
+            var error = deleteResult.Error;
+            return StatusCode((int)error.StatusCode, error);
+        }
+
+        return Ok(deleteResult.Value.ToResponse());
+    }
 }
