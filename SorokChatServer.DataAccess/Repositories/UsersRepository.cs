@@ -32,7 +32,7 @@ public class UsersRepository : IUsersRepository
             var entity = newUser.ToEntity();
             var createdUser = (await _database.Users.AddAsync(entity, cancellationToken)).Entity;
             await _database.SaveChangesAsync(cancellationToken);
-            return User.Create(createdUser);
+            return Result.Success<User, ApiError>(User.FromEntity(createdUser));
         }
         catch (Exception e)
         {
@@ -50,7 +50,7 @@ public class UsersRepository : IUsersRepository
             return Result.Failure<User, ApiError>(error);
         }
 
-        return User.Create(user);
+        return Result.Success<User, ApiError>(User.FromEntity(user));
     }
 
     public async Task<Result<List<User>, ApiError>> GetMany(Expression<Func<UserEntity, bool>> filter,
@@ -59,7 +59,7 @@ public class UsersRepository : IUsersRepository
         var users = await _database.Users
             .AsNoTracking()
             .Where(filter)
-            .Select(x => User.Create(x).Value)
+            .Select(x => User.FromEntity(x))
             .ToListAsync(cancellationToken);
         if (users.Count <= 0)
             return Result.Failure<List<User>, ApiError>(new ApiError("Users count is 0", HttpStatusCode.BadRequest));
@@ -89,6 +89,6 @@ public class UsersRepository : IUsersRepository
         if (local is not null) _database.Entry(local).State = EntityState.Detached;
         _database.Users.Update(updatedState);
         await _database.SaveChangesAsync(cancellationToken);
-        return User.Create(updatedState);
+        return Result.Success<User, ApiError>(User.FromEntity(updatedState));
     }
 }
