@@ -1,12 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
-
-namespace SorokChatServer.Core.Utils;
+﻿namespace SorokChatServer.Core.Utils;
 
 public static class RepositoryUtils
 {
-    private static readonly List<string> IgnoredFields = ["Id", "CreatedAt", "UpdatedAt"]; 
-    
+    private static readonly List<string> IgnoredFields = ["Id", "CreatedAt", "UpdatedAt"];
+
     public static TDest MergeStates<TSource, TDest>(TDest old, TSource current)
     {
         var result = Activator.CreateInstance<TDest>();
@@ -28,6 +25,7 @@ public static class RepositoryUtils
                 oldProperty.SetValue(result, resultValue);
             }
         }
+
         return result;
     }
 }
