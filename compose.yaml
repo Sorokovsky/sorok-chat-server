@@ -14,6 +14,7 @@
   database: 
     image: postgres:latest
     container_name: database
+    shm_size: 1gb
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres

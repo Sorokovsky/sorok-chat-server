@@ -44,6 +44,8 @@ public class BaseRepository<T> : IRepository<T> where T : BaseEntity
     public async Task<Result<T, ApiError>> Create(T item, CancellationToken cancellationToken)
     {
         var result = (await _items.AddAsync(item, cancellationToken)).Entity;
+        result.CreatedAt = DateTime.UtcNow;
+        result.UpdatedAt = DateTime.UtcNow;
         await _database.SaveChangesAsync(cancellationToken);
         return Result.Success<T, ApiError>(result);
     }
@@ -59,6 +61,7 @@ public class BaseRepository<T> : IRepository<T> where T : BaseEntity
         {
             var local = _database.Set<T>().Local.FirstOrDefault(wherePredicate.Compile());
             if (local is not null) _database.Entry(local).State = EntityState.Detached;
+            newState.UpdatedAt = DateTime.UtcNow;
             var result = _items.Update(newState).Entity;
             await _database.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
