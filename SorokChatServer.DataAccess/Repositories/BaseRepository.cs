@@ -77,6 +77,7 @@ public class BaseRepository<T> : IRepository<T> where T : BaseEntity
         var result = await GetOneBy(wherePredicate, cancellationToken);
         if (result.IsFailure) return result;
         await _items.Where(wherePredicate).ExecuteDeleteAsync(cancellationToken);
+        await _database.SaveChangesAsync(cancellationToken);
         return result;
     }
 }
