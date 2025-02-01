@@ -11,9 +11,10 @@ public class UsersService : IUsersService
 {
     private readonly IFilesService _filesService;
     private readonly IPasswordService _passwordService;
-    private readonly IUsersRepository _repository;
+    private readonly IRepository<UserEntity> _repository;
 
-    public UsersService(IPasswordService passwordService, IUsersRepository repository, IFilesService filesService)
+    public UsersService(IPasswordService passwordService, IRepository<UserEntity> repository,
+        IFilesService filesService)
     {
         _passwordService = passwordService;
         _repository = repository;
@@ -25,16 +26,20 @@ public class UsersService : IUsersService
         newUser = newUser with { password = await _passwordService.Encrypt(newUser.password) };
         var userResult = User.Create(newUser);
         if (userResult.IsFailure) return userResult;
-        var createdUser = await _repository.Create(userResult.Value, cancellationToken);
-        if (createdUser.IsFailure) return createdUser;
+        var createdUser = await _repository.Create(userResult.Value.ToEntity(), cancellationToken);
+        if (createdUser.IsFailure) return Result.Failure<User, ApiError>(createdUser.Error);
         var avatarPath = await UploadAvatarIfExists(newUser.avatar, createdUser.Value.Id, cancellationToken);
         var update = new UserEntity { AvatarPath = avatarPath };
-        return await _repository.Update(createdUser.Value.Id, User.FromEntity(update), cancellationToken);
+        var result = await _repository.Update(x => x.Id == createdUser.Value.Id, update, cancellationToken);
+        if (result.IsFailure) return Result.Failure<User, ApiError>(result.Error);
+        return Result.Success<User, ApiError>(User.FromEntity(result.Value));
     }
 
     public async Task<Result<User, ApiError>> GetById(long id, CancellationToken cancellationToken)
     {
-        return await _repository.GetBy(user => user.Id == id, cancellationToken);
+        var candidate = await _repository.GetOneBy(user => user.Id == id, cancellationToken);
+        if (candidate.IsFailure) return Result.Failure<User, ApiError>(candidate.Error);
+        return Result.Success<User, ApiError>(User.FromEntity(candidate.Value));
     }
 
     public async Task<Result<User, ApiError>> Update(long id, UpdateUserRequest user,
@@ -52,7 +57,9 @@ public class UsersService : IUsersService
         var userResult = User.Create(user, uploadedAvatar);
         if (userResult.IsFailure) return userResult;
 
-        return await _repository.Update(id, userResult.Value, cancellationToken);
+        var result = await _repository.Update(x => x.Id == id, userResult.Value.ToEntity(), cancellationToken);
+        if (result.IsFailure) return Result.Failure<User, ApiError>(result.Error);
+        return Result.Success<User, ApiError>(User.FromEntity(result.Value));
     }
 
     public async Task<Result<User, ApiError>> Delete(long id, CancellationToken cancellationToken)
@@ -60,7 +67,9 @@ public class UsersService : IUsersService
         var userResult = await GetById(id, cancellationToken);
         if (userResult.IsFailure) return userResult;
         await DeleteAvatarIfExists(userResult.Value.AvatarPath, cancellationToken);
-        return await _repository.Delete(id, cancellationToken);
+        var result = await _repository.Delete(x => x.Id == id, cancellationToken);
+        if (result.IsFailure) return Result.Failure<User, ApiError>(result.Error);
+        return Result.Success<User, ApiError>(User.FromEntity(result.Value));
     }
 
     private async Task<string> UploadAvatarIfExists(IFormFile? avatar, long id, CancellationToken cancellationToken)

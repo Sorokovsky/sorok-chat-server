@@ -1,4 +1,5 @@
 using SorokChatServer.Core.Configurations;
+using SorokChatServer.Core.Entities;
 using SorokChatServer.Core.Interfaces;
 using SorokChatServer.Core.Middlewares;
 using SorokChatServer.Core.Options;
@@ -11,7 +12,7 @@ var config = builder.Configuration;
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<Database>();
-builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddScoped<IRepository<UserEntity>, BaseRepository<UserEntity>>();
 builder.Services.AddSingleton<IPasswordService, PasswordService>();
 builder.Services.AddSingleton<IFilesService, FilesService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
