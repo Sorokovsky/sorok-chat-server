@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SorokChatServer.Core", "SorokChatServer.Core\SorokChatServer.Core.csproj", "{DE697900-0DDA-4F72-BD34-AF58EC02F396}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SorokChatServer.Core", "SorokChatServer.Core\SorokChatServer.Core.csproj", "{5FE1835B-5F68-48FA-B694-E3F6E2409395}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{DE697900-0DDA-4F72-BD34-AF58EC02F396}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE697900-0DDA-4F72-BD34-AF58EC02F396}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE697900-0DDA-4F72-BD34-AF58EC02F396}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FE1835B-5F68-48FA-B694-E3F6E2409395}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FE1835B-5F68-48FA-B694-E3F6E2409395}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FE1835B-5F68-48FA-B694-E3F6E2409395}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FE1835B-5F68-48FA-B694-E3F6E2409395}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{DE697900-0DDA-4F72-BD34-AF58EC02F396} = {39FB84C9-3031-40D7-8F01-2ED7ABF30B29}
