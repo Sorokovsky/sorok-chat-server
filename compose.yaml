@@ -24,11 +24,12 @@
     ports:
       - "5430:5430"
     volumes:
-      - ./pgdata:/var/lib/postgresql/data/pgdata
+      - ./pgdata:/var/lib/postgresql/data/
     networks:
       - sorokchat
 volumes:
   pgdata:
+    driver: local
 networks:
   sorokchat:
     driver: bridge
