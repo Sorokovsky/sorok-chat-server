@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using System.Net;
-using System.Text.Json;
 using CSharpFunctionalExtensions;
 using Microsoft.EntityFrameworkCore;
 using SorokChatServer.Core.Entities;
@@ -88,7 +87,6 @@ public class UsersRepository : IUsersRepository
         var local = _database.Set<UserEntity>()
             .Local.FirstOrDefault(x => x.Id == id);
         if (local is not null) _database.Entry(local).State = EntityState.Detached;
-        Console.WriteLine(JsonSerializer.Serialize(updatedState));
         _database.Users.Attach(updatedState);
         await _database.SaveChangesAsync(cancellationToken);
         return Result.Success<User, ApiError>(User.FromEntity(updatedState));
