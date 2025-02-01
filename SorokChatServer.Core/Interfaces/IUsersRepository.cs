@@ -17,5 +17,5 @@ public interface IUsersRepository
 
     public Task<Result<User, ApiError>> Delete(long id, CancellationToken cancellationToken);
 
-    public Task<Result<User, ApiError>> Update(long id, UserEntity updatedUser, CancellationToken cancellationToken);
+    public Task<Result<User, ApiError>> Update(long id, User updatedUser, CancellationToken cancellationToken);
 }

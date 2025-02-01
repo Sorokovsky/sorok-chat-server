@@ -10,5 +10,7 @@ public interface IUsersService
 
     public Task<Result<User, ApiError>> GetById(long id, CancellationToken cancellationToken);
 
+    public Task<Result<User, ApiError>> Update(long id, UpdateUserRequest user, CancellationToken cancellationToken);
+
     public Task<Result<User, ApiError>> Delete(long id, CancellationToken cancellationToken);
 }

@@ -7,16 +7,16 @@ namespace SorokChatServer.Core.Models;
 public class User : Base
 {
     private User(
-        long id, 
-        DateTime createdAt, 
-        DateTime updatedAt, 
-        Email email, 
-        string password, 
-        string surname, 
+        long id,
+        DateTime createdAt,
+        DateTime updatedAt,
+        Email email,
+        string password,
+        string surname,
         string name,
         string middleName,
         string avatarPath
-        ) : base(id, createdAt, updatedAt)
+    ) : base(id, createdAt, updatedAt)
     {
         Email = email;
         Password = password;
@@ -27,15 +27,15 @@ public class User : Base
     }
 
     public Email Email { get; }
-    
+
     public string Password { get; }
-    
+
     public string Surname { get; }
-    
+
     public string Name { get; }
-    
+
     public string MiddleName { get; }
-    
+
     public string AvatarPath { get; }
 
     public static Result<User, ApiError> Create(
@@ -82,7 +82,7 @@ public class User : Base
             entity.Name,
             entity.MiddleName,
             entity.AvatarPath
-            );
+        );
     }
 
     public static Result<User, ApiError> Create(CreateUserRequest newUser)
@@ -90,14 +90,37 @@ public class User : Base
         return Create(
             0,
             DateTime.UtcNow,
-            DateTime.UtcNow, 
+            DateTime.UtcNow,
             newUser.email,
             newUser.password,
             newUser.surname ?? string.Empty,
             newUser.name ?? string.Empty,
             newUser.middleName ?? string.Empty,
             string.Empty
-            );
+        );
+    }
+
+    public static Result<User, ApiError> Create(UpdateUserRequest updatedUser, string? avatarPath)
+    {
+        Email email = null;
+        if (string.IsNullOrWhiteSpace(updatedUser.email) is false)
+        {
+            var emailResult = Email.Create(updatedUser.email);
+            if (emailResult.IsFailure) return Result.Failure<User, ApiError>(emailResult.Error);
+            email = emailResult.Value;
+        }
+
+        return Result.Success<User, ApiError>(new User(
+            0,
+            DateTime.UtcNow,
+            DateTime.UtcNow,
+            email,
+            updatedUser.password,
+            updatedUser.surname,
+            updatedUser.name,
+            updatedUser.middleName,
+            avatarPath
+        ));
     }
 
     public UserEntity ToEntity()
@@ -112,7 +135,7 @@ public class User : Base
             Password = Password,
             Surname = Surname,
             Name = Name,
-            MiddleName = MiddleName 
+            MiddleName = MiddleName
         };
     }
 

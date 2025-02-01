@@ -77,7 +77,7 @@ public class UsersRepository : IUsersRepository
         return Result.Success<User, ApiError>(candidateResult.Value);
     }
 
-    public async Task<Result<User, ApiError>> Update(long id, UserEntity updatedUser,
+    public async Task<Result<User, ApiError>> Update(long id, User updatedUser,
         CancellationToken cancellationToken)
     {
         var candidateResult = await GetBy(x => x.Id == id, cancellationToken);

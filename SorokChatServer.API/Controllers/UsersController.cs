@@ -54,4 +54,13 @@ public class UsersController : ControllerBase
 
         return Ok(deleteResult.Value.ToResponse());
     }
+
+    [HttpPut("{id:long}")]
+    public async Task<IActionResult> Update([FromRoute] long id, [FromForm] UpdateUserRequest user,
+        CancellationToken cancellationToken)
+    {
+        var result = await _usersService.Update(id, user, cancellationToken);
+        if (result.IsFailure) return StatusCode((int)result.Error.StatusCode, result.Error);
+        return Ok(result.Value.ToResponse());
+    }
 }
