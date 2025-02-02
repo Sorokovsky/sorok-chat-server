@@ -43,9 +43,10 @@ public class BaseRepository<T> : IRepository<T> where T : BaseEntity
 
     public async Task<Result<T, ApiError>> Create(T item, CancellationToken cancellationToken)
     {
+        item.CreatedAt = DateTime.UtcNow;
+        item.UpdatedAt = DateTime.UtcNow;
         var result = (await _items.AddAsync(item, cancellationToken)).Entity;
-        result.CreatedAt = DateTime.UtcNow;
-        result.UpdatedAt = DateTime.UtcNow;
+
         await _database.SaveChangesAsync(cancellationToken);
         return Result.Success<T, ApiError>(result);
     }

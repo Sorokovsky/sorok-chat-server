@@ -16,18 +16,12 @@ public static class RepositoryUtils
                 .FirstOrDefault(x => x.Name == currentProperty.Name);
             var bothHasThisProperty = oldProperty is not null;
             var isIgnored = IgnoredFields.Contains(currentProperty.Name);
-            if (bothHasThisProperty && isIgnored is false)
+            if (bothHasThisProperty)
             {
                 var newValue = currentProperty.GetValue(current);
                 var oldValue = oldProperty!.GetValue(old);
-                var resultValue = newValue == null ? oldValue : newValue;
+                var resultValue = newValue == null || isIgnored ? oldValue : newValue;
                 oldProperty.SetValue(result, resultValue);
-            }
-
-            if (bothHasThisProperty && currentProperty.Name == "Id")
-            {
-                var value = oldProperty!.GetValue(old)!;
-                oldProperty.SetValue(result, value);
             }
         }
 
