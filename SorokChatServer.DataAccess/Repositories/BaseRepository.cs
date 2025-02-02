@@ -60,7 +60,7 @@ public class BaseRepository<T> : IRepository<T> where T : BaseEntity
         await using var transaction = await _database.Database.BeginTransactionAsync(cancellationToken);
         try
         {
-            var local = _database.Set<T>().Local.FirstOrDefault(wherePredicate.Compile());
+            var local = _items.Local.FirstOrDefault(wherePredicate.Compile());
             if (local is not null) _database.Entry(local).State = EntityState.Detached;
             newState.UpdatedAt = DateTime.UtcNow;
             var result = _items.Update(newState).Entity;
