@@ -12,7 +12,7 @@ var config = builder.Configuration;
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<Database>();
-builder.Services.AddScoped<IRepository<UserEntity>, BaseRepository<UserEntity>>();
+builder.Services.AddScoped<IRepository<UserEntity>, Repository<UserEntity>>();
 builder.Services.AddSingleton<IPasswordService, PasswordService>();
 builder.Services.AddSingleton<IFilesService, FilesService>();
 builder.Services.AddScoped<IUsersService, UsersService>();

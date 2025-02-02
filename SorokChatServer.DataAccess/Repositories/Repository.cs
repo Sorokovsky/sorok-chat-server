@@ -9,12 +9,12 @@ using SorokChatServer.Core.Utils;
 
 namespace SorokChatServer.DataAccess.Repositories;
 
-public class BaseRepository<T> : IRepository<T> where T : BaseEntity
+public class Repository<T> : IRepository<T> where T : BaseEntity
 {
     private readonly Database _database;
     private readonly DbSet<T> _items;
 
-    public BaseRepository(Database database)
+    public Repository(Database database)
     {
         _database = database;
         _items = _database.Set<T>();
