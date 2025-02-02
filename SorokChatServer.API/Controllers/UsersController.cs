@@ -42,6 +42,15 @@ public class UsersController : ControllerBase
         return Ok(userResult.Value.ToResponse());
     }
 
+    [HttpPut("{id:long}")]
+    public async Task<IActionResult> Update([FromRoute] long id, [FromForm] UpdateUserRequest user,
+        CancellationToken cancellationToken)
+    {
+        var result = await _usersService.Update(id, user, cancellationToken);
+        if (result.IsFailure) return StatusCode((int)result.Error.StatusCode, result.Error);
+        return Ok(result.Value.ToResponse());
+    }
+
     [HttpDelete("{id:long}")]
     public async Task<IActionResult> Delete([FromRoute] long id, CancellationToken cancellationToken)
     {
@@ -55,11 +64,10 @@ public class UsersController : ControllerBase
         return Ok(deleteResult.Value.ToResponse());
     }
 
-    [HttpPut("{id:long}")]
-    public async Task<IActionResult> Update([FromRoute] long id, [FromForm] UpdateUserRequest user,
-        CancellationToken cancellationToken)
+    [HttpDelete("avatar/{id:long}")]
+    public async Task<IActionResult> DeleteAvatar([FromRoute] long id, CancellationToken cancellationToken)
     {
-        var result = await _usersService.Update(id, user, cancellationToken);
+        var result = await _usersService.DeleteAvatar(id, cancellationToken);
         if (result.IsFailure) return StatusCode((int)result.Error.StatusCode, result.Error);
         return Ok(result.Value.ToResponse());
     }

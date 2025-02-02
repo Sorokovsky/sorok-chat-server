@@ -31,7 +31,7 @@ public class FilesService : IFilesService
     )
     {
         var serverFolder = Path.Combine(StaticFolder, folder);
-        var fileName = string.Concat(name, ".", Path.GetExtension(file.FileName));
+        var fileName = string.Concat(name, Path.GetExtension(file.FileName));
         var resultPath = Path.Combine(folder, fileName);
         var serverPath = Path.Combine(serverFolder, fileName);
         if (Directory.Exists(serverFolder) is false)

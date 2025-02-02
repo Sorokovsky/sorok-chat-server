@@ -1,4 +1,5 @@
-﻿using CSharpFunctionalExtensions;
+﻿using System.Net;
+using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Http;
 using SorokChatServer.Core.Contracts;
 using SorokChatServer.Core.Entities;
@@ -72,6 +73,23 @@ public class UsersService : IUsersService
         return Result.Success<User, ApiError>(User.FromEntity(result.Value));
     }
 
+    public async Task<Result<User, ApiError>> DeleteAvatar(long id, CancellationToken cancellationToken)
+    {
+        var candidateResult = await GetById(id, cancellationToken);
+        if (candidateResult.IsFailure) return candidateResult;
+        var deletingResult = await DeleteAvatarIfExists(candidateResult.Value.AvatarPath, cancellationToken);
+        if (deletingResult.IsFailure) return Result.Failure<User, ApiError>(deletingResult.Error);
+
+        var entity = new UserEntity
+        {
+            AvatarPath = string.Empty
+        };
+        var result = await _repository.Update(x => x.Id == id, entity, cancellationToken);
+        if (result.IsFailure) return Result.Failure<User, ApiError>(result.Error);
+
+        return Result.Success<User, ApiError>(User.FromEntity(result.Value));
+    }
+
     private async Task<string> UploadAvatarIfExists(IFormFile? avatar, long id, CancellationToken cancellationToken)
     {
         if (avatar is null) return string.Empty;
@@ -79,9 +97,12 @@ public class UsersService : IUsersService
         return uploadResult.IsFailure ? string.Empty : uploadResult.Value;
     }
 
-    private async Task DeleteAvatarIfExists(string avatarPath, CancellationToken cancellationToken)
+    private async Task<Result<bool, ApiError>> DeleteAvatarIfExists(string avatarPath,
+        CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(avatarPath)) return;
-        await _filesService.Delete(avatarPath, cancellationToken);
+        if (string.IsNullOrWhiteSpace(avatarPath))
+            return Result.Failure<bool, ApiError>(new ApiError("Avatar undefined.", HttpStatusCode.BadRequest));
+
+        return await _filesService.Delete(avatarPath, cancellationToken);
     }
 }

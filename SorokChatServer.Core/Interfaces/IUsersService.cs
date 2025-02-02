@@ -13,4 +13,6 @@ public interface IUsersService
     public Task<Result<User, ApiError>> Update(long id, UpdateUserRequest user, CancellationToken cancellationToken);
 
     public Task<Result<User, ApiError>> Delete(long id, CancellationToken cancellationToken);
+
+    public Task<Result<User, ApiError>> DeleteAvatar(long id, CancellationToken cancellationToken);
 }
