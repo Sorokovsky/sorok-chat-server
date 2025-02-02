@@ -1,8 +1,10 @@
-﻿namespace SorokChatServer.Core.Utils;
+﻿using SorokChatServer.Core.Entities;
+
+namespace SorokChatServer.Core.Utils;
 
 public static class RepositoryUtils
 {
-    private static readonly List<string> IgnoredFields = ["Id", "CreatedAt", "UpdatedAt"];
+    private static List<string> IgnoredFields => GetIgnoredFields();
 
     public static TDest MergeStates<TSource, TDest>(TDest old, TSource current)
     {
@@ -26,5 +28,13 @@ public static class RepositoryUtils
         }
 
         return result;
+    }
+
+    private static List<string> GetIgnoredFields()
+    {
+        return typeof(BaseEntity)
+            .GetProperties()
+            .Select(x => x.Name)
+            .ToList();
     }
 }
