@@ -3,7 +3,7 @@ using CSharpFunctionalExtensions;
 
 namespace SorokChatServer.Logic.Models;
 
-public sealed partial class Email : ValueObject
+public partial class Email : ValueObject
 {
     public const int MAX_LENGTH = 20;
 

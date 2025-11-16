@@ -2,7 +2,7 @@
 
 namespace SorokChatServer.Logic.Models;
 
-public sealed class Description : ValueObject
+public class Description : ValueObject
 {
     public const int MAX_LENGTH = 200;
 

@@ -2,7 +2,7 @@
 
 namespace SorokChatServer.Logic.Models;
 
-public sealed class User : Base
+public class User : Base
 {
     private User(
         long id,

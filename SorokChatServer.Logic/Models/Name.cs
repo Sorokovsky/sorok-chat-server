@@ -2,15 +2,11 @@
 
 namespace SorokChatServer.Logic.Models;
 
-public sealed class Name : ValueObject
+public class Name : ValueObject
 {
     public const int MAX_FIRST_NAME_LENGTH = 20;
     public const int MAX_LAST_NAME_LENGTH = 20;
     public const int MAX_MIDDLE_NAME_LENGTH = 20;
-    
-    public string FirstName { get; }
-    public string LastName { get; }
-    public string MiddleName { get; }
 
     private Name(string firstName, string lastName, string middleName)
     {
@@ -18,6 +14,10 @@ public sealed class Name : ValueObject
         LastName = lastName;
         MiddleName = middleName;
     }
+
+    public string FirstName { get; }
+    public string LastName { get; }
+    public string MiddleName { get; }
 
     public static Result<Name> Create(string firstName, string lastName, string middleName)
     {
@@ -33,11 +33,13 @@ public sealed class Name : ValueObject
 
         if (string.IsNullOrWhiteSpace(middleName) || middleName.Length > MAX_MIDDLE_NAME_LENGTH)
         {
-            return Result.Failure<Name>($"По батькові має бути не пустим і не довшим ніж {MAX_MIDDLE_NAME_LENGTH} символів");
+            return Result.Failure<Name>(
+                $"По батькові має бути не пустим і не довшим ніж {MAX_MIDDLE_NAME_LENGTH} символів");
         }
+
         return Result.Success(new Name(firstName, lastName, middleName));
     }
-    
+
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return FirstName;
