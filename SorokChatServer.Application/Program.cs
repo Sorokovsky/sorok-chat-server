@@ -43,6 +43,8 @@ builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddSingleton<ITokenSerializerService, JwtSerializerService>();
+builder.Services.AddSingleton<IAccessTokenStorage, AccessTokenStorage>();
+builder.Services.AddSingleton<IRefreshTokenStorage, RefreshTokenStorage>();
 
 var app = builder.Build();
 

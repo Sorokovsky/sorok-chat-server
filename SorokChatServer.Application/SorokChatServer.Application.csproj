@@ -21,10 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\SorokChatServer.Core\SorokChatServer.Core.csproj" />
       <ProjectReference Include="..\SorokChatServer.Logic\SorokChatServer.Logic.csproj" />
         <ProjectReference Include="..\SorokChatServer.Postgres\SorokChatServer.Postgres.csproj"/>

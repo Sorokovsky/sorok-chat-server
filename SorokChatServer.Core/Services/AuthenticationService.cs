@@ -10,21 +10,29 @@ namespace SorokChatServer.Core.Services;
 
 public class AuthenticationService : IAuthenticationService
 {
-    private const string Authorization = nameof(Authorization);
-    private const string Bearer = nameof(Bearer);
-    private const string CookieName = "__Host-token";
+    private const string InvalidCredentials = "Не вірні авторизаційні данні";
+    private readonly IAccessTokenStorage _accessTokenStorage;
+
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly JwtOptions _options;
-    private readonly ITokenSerializerService _tokenSerializerService;
-
+    private readonly IPasswordHasher _passwordHasher;
+    private readonly IRefreshTokenStorage _refreshTokenStorage;
     private readonly IUsersService _usersService;
 
-    public AuthenticationService(IUsersService usersService, IHttpContextAccessor httpContextAccessor,
-        IOptions<JwtOptions> options, ITokenSerializerService tokenSerializerService)
+    public AuthenticationService(
+        IUsersService usersService,
+        IHttpContextAccessor httpContextAccessor,
+        IOptions<JwtOptions> options,
+        IPasswordHasher passwordHasher,
+        IAccessTokenStorage accessTokenStorage,
+        IRefreshTokenStorage refreshTokenStorage
+    )
     {
         _usersService = usersService;
         _httpContextAccessor = httpContextAccessor;
-        _tokenSerializerService = tokenSerializerService;
+        _passwordHasher = passwordHasher;
+        _accessTokenStorage = accessTokenStorage;
+        _refreshTokenStorage = refreshTokenStorage;
         _options = options.Value;
     }
 
@@ -36,9 +44,24 @@ public class AuthenticationService : IAuthenticationService
         return createdUserResult;
     }
 
-    public Task<Result<User>> LoginAsync(LoginUser loginUser, CancellationToken cancellationToken = default)
+    public async Task<Result<User>> LoginAsync(LoginUser loginUser, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var found = await _usersService.GetByEmailAsync(loginUser.Email, cancellationToken);
+        if (found.IsFailure) return Result.Failure<User>(InvalidCredentials);
+        var user = found.Value;
+        var isPasswordValid =
+            await _passwordHasher.VerifyAsync(loginUser.Password, user.Password.Value, cancellationToken);
+        if (!isPasswordValid) return Result.Failure<User>(InvalidCredentials);
+        await Authenticate(user, cancellationToken);
+        return Result.Success(user);
+    }
+
+    public async Task LogoutAsync(CancellationToken cancellationToken = default)
+    {
+        if (_httpContextAccessor.HttpContext is null) return;
+        var response = _httpContextAccessor.HttpContext.Response;
+        await _accessTokenStorage.ClearTokenAsync(response, cancellationToken);
+        await _refreshTokenStorage.ClearTokenAsync(response, cancellationToken);
     }
 
     private async Task Authenticate(User user, CancellationToken cancellationToken = default)
@@ -58,27 +81,7 @@ public class AuthenticationService : IAuthenticationService
             now,
             now.AddDays(_options.RefreshTokenLifetimeDays)
         );
-        var accessString = await _tokenSerializerService.SerializeTokenAsync(accessToken, cancellationToken);
-        var refreshString = await _tokenSerializerService.SerializeTokenAsync(refreshToken, cancellationToken);
-        AddAccessTokenToResponse(response, accessString);
-        AddRefreshTokenToResponse(response, refreshString, refreshToken.ExpiresAt - refreshToken.ExpiresAt);
-    }
-
-    private static void AddAccessTokenToResponse(HttpResponse response, string accessToken)
-    {
-        response.Headers[Authorization] = $"{Bearer} {accessToken}";
-    }
-
-    private static void AddRefreshTokenToResponse(HttpResponse response, string refreshToken, TimeSpan maxAge)
-    {
-        response.Cookies.Append(CookieName, refreshToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
-            Domain = null,
-            Path = "/",
-            MaxAge = maxAge
-        });
+        await _accessTokenStorage.SetTokenAsync(accessToken, response, cancellationToken);
+        await _refreshTokenStorage.SetTokenAsync(refreshToken, response, cancellationToken);
     }
 }

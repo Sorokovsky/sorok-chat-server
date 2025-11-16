@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using CSharpFunctionalExtensions;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SorokChatServer.Core.Options;
 using SorokChatServer.Logic.Contracts;
@@ -15,9 +16,9 @@ public class JwtSerializerService : ITokenSerializerService
 
     private readonly JwtOptions _options;
 
-    public JwtSerializerService(JwtOptions options)
+    public JwtSerializerService(IOptions<JwtOptions> options)
     {
-        _options = options;
+        _options = options.Value;
     }
 
     public async Task<string> SerializeTokenAsync(Token token, CancellationToken cancellationToken = default)

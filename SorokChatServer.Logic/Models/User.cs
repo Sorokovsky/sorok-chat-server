@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using SorokChatServer.Logic.Contracts;
 using SorokChatServer.Logic.Entities;
 
 namespace SorokChatServer.Logic.Models;
@@ -82,5 +83,11 @@ public class User : Base
             Password,
             MacSecret
         );
+    }
+
+    public GetUser ToGet()
+    {
+        return new GetUser(Id, CreatedAt, UpdatedAt, Email.Value, Name.FirstName, Name.LastName, Name.MiddleName,
+            MacSecret);
     }
 }
