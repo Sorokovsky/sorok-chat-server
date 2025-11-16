@@ -11,7 +11,7 @@ public interface IUsersRepository
 
     public Task<Result<User>> CreateAsync(User user, CancellationToken cancellationToken = default);
 
-    public Task<Result<User>> UpdateAsync(User user, CancellationToken cancellationToken = default);
+    public Task<Result<User>> UpdateAsync(long id, User user, CancellationToken cancellationToken = default);
 
     public Task<Result<User>> DeleteAsync(long userId, CancellationToken cancellationToken = default);
 }

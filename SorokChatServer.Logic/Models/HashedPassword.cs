@@ -5,8 +5,8 @@ namespace SorokChatServer.Logic.Models;
 
 public class HashedPassword : ValueObject
 {
-    public const int MAX_PASSWORD_LENGTH = 100;
-    public const int MIN_PASSWORD_LENGTH = 8;
+    public const int MaxPasswordLength = 100;
+    public const int MinPasswordLength = 8;
 
     private HashedPassword(string value)
     {
@@ -15,13 +15,13 @@ public class HashedPassword : ValueObject
 
     public string Value { get; }
 
-    public static async Task<Result<HashedPassword>> Create(string plainPassword, IPasswordHasher passwordHasher)
+    public static async Task<Result<HashedPassword>> Create(string? plainPassword, IPasswordHasher passwordHasher)
     {
-        if (string.IsNullOrWhiteSpace(plainPassword) || plainPassword.Length < MIN_PASSWORD_LENGTH ||
-            plainPassword.Length > MAX_PASSWORD_LENGTH)
+        if (string.IsNullOrWhiteSpace(plainPassword) || plainPassword.Length < MinPasswordLength ||
+            plainPassword.Length > MaxPasswordLength)
         {
             return Result.Failure<HashedPassword>(
-                $"Пароль має бути довжиною не менше {MIN_PASSWORD_LENGTH} і не більше {MAX_PASSWORD_LENGTH} символів");
+                $"Пароль має бути довжиною не менше {MinPasswordLength} і не більше {MaxPasswordLength} символів");
         }
 
         var hashed = await passwordHasher.HashAsync(plainPassword);

@@ -1,4 +1,6 @@
-﻿namespace SorokChatServer.Postgres.Entities;
+﻿using SorokChatServer.Logic.Entities;
+
+namespace SorokChatServer.Postgres.Entities;
 
 public class MessageEntity : BaseEntity
 {

@@ -1,4 +1,5 @@
-﻿using SorokChatServer.Logic.Models;
+﻿using SorokChatServer.Logic.Entities;
+using SorokChatServer.Logic.Models;
 
 namespace SorokChatServer.Postgres.Entities;
 

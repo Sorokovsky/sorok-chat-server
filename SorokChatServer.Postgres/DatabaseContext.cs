@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using SorokChatServer.Postgres.Entities;
+using SorokChatServer.Logic.Entities;
 
 namespace SorokChatServer.Postgres;
 

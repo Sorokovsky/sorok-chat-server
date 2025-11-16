@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using SorokChatServer.Logic.Entities;
 
 namespace SorokChatServer.Logic.Models;
 
@@ -27,7 +28,7 @@ public class User : Base
 
     public string MacSecret { get; }
 
-    public Result<User> Create(
+    public static Result<User> Create(
         string firstName,
         string lastName,
         string middleName,
@@ -55,6 +56,31 @@ public class User : Base
                 emailResult.Value,
                 hashedPassword
             )
+        );
+    }
+
+    public static User FromEntity(UserEntity entity)
+    {
+        return new User(
+            entity.Id,
+            entity.CreatedAt,
+            entity.UpdatedAt,
+            entity.Name,
+            entity.Email,
+            entity.Password
+        );
+    }
+
+    public UserEntity ToEntity()
+    {
+        return new UserEntity(
+            Id,
+            CreatedAt,
+            UpdatedAt,
+            Name,
+            Email,
+            Password,
+            MacSecret
         );
     }
 }

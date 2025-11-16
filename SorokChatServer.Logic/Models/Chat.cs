@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using SorokChatServer.Postgres.Entities;
 
 namespace SorokChatServer.Logic.Models;
 
@@ -7,8 +8,16 @@ public class Chat : Base
     private readonly List<User> _members;
     private readonly List<Message> _messages;
 
-    private Chat(Title title, Description description, IEnumerable<User> members, IEnumerable<Message> messages)
-        : base(0, DateTime.UtcNow, DateTime.UtcNow)
+    private Chat(
+        long id,
+        DateTime createdAt,
+        DateTime updatedAt,
+        Title title,
+        Description description,
+        IEnumerable<User> members,
+        IEnumerable<Message> messages
+    )
+        : base(id, createdAt, updatedAt)
     {
         Title = title;
         Description = description;
@@ -49,6 +58,28 @@ public class Chat : Base
         var descriptionResult = Description.Create(description);
         if (titleResult.IsFailure) return Result.Failure<Chat>(titleResult.Error);
         if (descriptionResult.IsFailure) return Result.Failure<Chat>(descriptionResult.Error);
-        return Result.Success(new Chat(titleResult.Value, descriptionResult.Value, [], []));
+        return Result.Success(new Chat(
+                0,
+                DateTime.UtcNow,
+                DateTime.UtcNow,
+                titleResult.Value,
+                descriptionResult.Value,
+                [],
+                []
+            )
+        );
+    }
+
+    public static Chat FromEntity(ChatEntity entity)
+    {
+        return new Chat(
+            entity.Id,
+            entity.CreatedAt,
+            entity.UpdatedAt,
+            entity.Title,
+            entity.Description,
+            entity.Members.Select(User.FromEntity).ToList(),
+            entity.Messages.Select(Message.FromEntity).ToList()
+        );
     }
 }

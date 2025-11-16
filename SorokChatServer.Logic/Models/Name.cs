@@ -19,7 +19,7 @@ public class Name : ValueObject
     public string LastName { get; }
     public string MiddleName { get; }
 
-    public static Result<Name> Create(string firstName, string lastName, string middleName)
+    public static Result<Name> Create(string? firstName, string? lastName, string? middleName)
     {
         if (string.IsNullOrWhiteSpace(firstName) || firstName.Length > MAX_FIRST_NAME_LENGTH)
         {
