@@ -15,7 +15,7 @@ public class AuthenticationController : ControllerBase
         _authenticationService = authenticationService;
     }
 
-    [HttpPost]
+    [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] CreateUser createdUser,
         CancellationToken cancellationToken = default)
     {
@@ -25,7 +25,7 @@ public class AuthenticationController : ControllerBase
         return Created(location, result.Value.ToGet());
     }
 
-    [HttpPut]
+    [HttpPut("login")]
     public async Task<IActionResult> Login([FromBody] LoginUser loginUser,
         CancellationToken cancellationToken = default)
     {
@@ -34,7 +34,14 @@ public class AuthenticationController : ControllerBase
         return Ok(result.Value.ToGet());
     }
 
-    [HttpGet]
+    [HttpDelete("logout")]
+    public async Task<IActionResult> Logout(CancellationToken cancellationToken = default)
+    {
+        await _authenticationService.LogoutAsync(cancellationToken);
+        return NoContent();
+    }
+
+    [HttpGet("get-me")]
     public async Task<IActionResult> GetMe(CancellationToken cancellationToken = default)
     {
         return Ok();
