@@ -4,10 +4,15 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="CSharpFunctionalExtensions" Version="3.6.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
       <PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.1" />
       <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.0.1" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.0.1" />
@@ -21,6 +26,7 @@
     <ItemGroup>
       <ProjectReference Include="..\SorokChatServer.Core\SorokChatServer.Core.csproj" />
       <ProjectReference Include="..\SorokChatServer.Logic\SorokChatServer.Logic.csproj" />
+        <ProjectReference Include="..\SorokChatServer.Postgres\SorokChatServer.Postgres.csproj"/>
     </ItemGroup>
 
 </Project>

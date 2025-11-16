@@ -1,0 +1,21 @@
+﻿services:
+  Sorokchat.database:
+    image: postgres:17-alpine
+    container_name: sorokchat.postgres
+    restart: always
+    environment:
+      POSTGRES_DB: sorokchat
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - sorokchat
+volumes:
+  postgres_data:
+    driver: local
+networks:
+  sorokchat:
+    driver: bridge

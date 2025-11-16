@@ -6,13 +6,13 @@ namespace SorokChatServer.Logic.Models;
 public sealed partial class Email : ValueObject
 {
     public const int MAX_LENGTH = 20;
-    
-    public string Value { get; }
 
-    private Email(string email)
+    private Email(string value)
     {
-        Value = email;
+        Value = value;
     }
+
+    public string Value { get; }
 
     public static Result<Email> Create(string email)
     {
@@ -23,7 +23,7 @@ public sealed partial class Email : ValueObject
 
         return Result.Failure<Email>("Не коректна електронна адреса");
     }
-    
+
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return Value;
