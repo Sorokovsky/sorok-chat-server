@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using SorokChatServer.Application.Conventions;
+using SorokChatServer.Core.Middlewares;
 using SorokChatServer.Core.Options;
 using SorokChatServer.Core.Services;
 using SorokChatServer.Logic.Repositories;
@@ -56,5 +57,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<JwtAuthenticationMiddleware>();
 
 app.Run();
