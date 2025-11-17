@@ -19,14 +19,13 @@ public class JwtAuthenticationMiddleware
 
     public async Task InvokeAsync(
         HttpContext context,
-        RequestDelegate next,
         IAccessTokenStorage accessTokenStorage,
         IRefreshTokenStorage refreshTokenStorage,
         IUsersService usersService,
-        IOptions<JwtOptions> jwtOptions,
-        CancellationToken cancellationToken = default
+        IOptions<JwtOptions> jwtOptions
     )
     {
+        var cancellationToken = context.RequestAborted;
         var accessToken = await accessTokenStorage.GetTokenAsync(context.Request, cancellationToken);
         var refreshToken = await refreshTokenStorage.GetTokenAsync(context.Request, cancellationToken);
         if (accessToken is not null)
@@ -53,6 +52,6 @@ public class JwtAuthenticationMiddleware
                 }
             }
         }
-        await next(context);
+        await _next(context);
     }
 }
