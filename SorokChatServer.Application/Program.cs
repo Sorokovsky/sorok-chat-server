@@ -32,6 +32,9 @@ builder.Services.AddSingleton<ITokenSerializerService, JwtSerializerService>();
 builder.Services.AddSingleton<IAccessTokenStorage, AccessTokenStorage>();
 builder.Services.AddSingleton<IRefreshTokenStorage, RefreshTokenStorage>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IMessagesRepository, MessagesRepository>();
+builder.Services.AddScoped<IChatsRepository, ChatsRepository>();
+builder.Services.AddScoped<IChatsService, ChatsService>();
 
 var app = builder.Build();
 

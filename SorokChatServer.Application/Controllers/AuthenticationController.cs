@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SorokChatServer.Core.Filters;
 using SorokChatServer.Logic.Contracts;
 using SorokChatServer.Logic.Services;
 
@@ -17,6 +18,7 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost("register")]
+    [RequireAnonymous]
     public async Task<IActionResult> Register([FromBody] CreateUser createdUser,
         CancellationToken cancellationToken = default)
     {
@@ -27,6 +29,7 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPut("login")]
+    [RequireAnonymous]
     public async Task<IActionResult> Login([FromBody] LoginUser loginUser,
         CancellationToken cancellationToken = default)
     {
@@ -36,6 +39,7 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpDelete("logout")]
+    [Authorize]
     public async Task<IActionResult> Logout(CancellationToken cancellationToken = default)
     {
         await _authenticationService.LogoutAsync(cancellationToken);
@@ -44,8 +48,7 @@ public class AuthenticationController : ControllerBase
 
     [HttpGet("get-me")]
     [Authorize]
-    public async Task<IActionResult> GetMe([FromServices] ICurrentUserService currentUser,
-        CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetMe([FromServices] ICurrentUserService currentUser)
     {
         return Ok(currentUser.Current!.ToGet());
     }

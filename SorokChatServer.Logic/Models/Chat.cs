@@ -82,4 +82,17 @@ public class Chat : Base
             entity.Messages.Select(Message.FromEntity).ToList()
         );
     }
+
+    public ChatEntity ToEntity()
+    {
+        return new ChatEntity(
+            Id,
+            CreatedAt,
+            UpdatedAt,
+            Title,
+            Description,
+            Members.Select(x => x.ToEntity()).ToList(),
+            Messages.Select(x => x.ToEntity()).ToList()
+        );
+    }
 }

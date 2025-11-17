@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using SorokChatServer.Postgres.Entities;
+using SorokChatServer.Logic.Entities;
 
 namespace SorokChatServer.Logic.Models;
 
@@ -32,6 +32,18 @@ public class Message : Base
                 mac,
                 author
             )
+        );
+    }
+
+    public MessageEntity ToEntity()
+    {
+        return new MessageEntity(
+            Id,
+            CreatedAt,
+            UpdatedAt,
+            Text,
+            Mac,
+            Author.ToEntity()
         );
     }
 
