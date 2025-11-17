@@ -21,14 +21,17 @@ public class MessagesRepository : IMessagesRepository
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
         try
         {
+            var entity = message.ToEntity();
+            _context.Entry(entity.Author).State = EntityState.Unchanged;
             var createdMessage = await _context.Messages
-                .AddAsync(message.ToEntity(), cancellationToken);
+                .AddAsync(entity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
             return Result.Success(Message.FromEntity(createdMessage.Entity));
         }
         catch (Exception exception)
         {
+            Console.WriteLine(exception);
             await transaction.RollbackAsync(cancellationToken);
             return Result.Failure<Message>(exception.Message);
         }
@@ -37,6 +40,7 @@ public class MessagesRepository : IMessagesRepository
     public async Task<Result<Message>> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {
         var message = await _context.Messages
+            .Include(message => message.Author)
             .AsNoTracking()
             .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
         if (message is null) return Result.Failure<Message>(NotFoundMessage);

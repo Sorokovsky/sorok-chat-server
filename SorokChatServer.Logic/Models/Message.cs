@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using SorokChatServer.Logic.Contracts;
 using SorokChatServer.Logic.Entities;
 
 namespace SorokChatServer.Logic.Models;
@@ -44,6 +45,18 @@ public class Message : Base
             Text,
             Mac,
             Author.ToEntity()
+        );
+    }
+
+    public GetMessage ToGet()
+    {
+        return new GetMessage(
+            Id,
+            CreatedAt,
+            UpdatedAt,
+            Text,
+            Mac,
+            Author.ToGet()
         );
     }
 

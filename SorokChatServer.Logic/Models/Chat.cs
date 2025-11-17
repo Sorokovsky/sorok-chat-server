@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using SorokChatServer.Logic.Contracts;
 using SorokChatServer.Postgres.Entities;
 
 namespace SorokChatServer.Logic.Models;
@@ -78,8 +79,21 @@ public class Chat : Base
             entity.UpdatedAt,
             entity.Title,
             entity.Description,
-            entity.Members.Select(User.FromEntity).ToList(),
-            entity.Messages.Select(Message.FromEntity).ToList()
+            entity.Members is not null ? entity.Members.Select(User.FromEntity).ToList() : [],
+            entity.Messages is not null ? entity.Messages.Select(Message.FromEntity).ToList() : []
+        );
+    }
+
+    public GetChat ToGet()
+    {
+        return new GetChat(
+            Id,
+            CreatedAt,
+            UpdatedAt,
+            Title.Value,
+            Description.Value,
+            Members.Select(x => x.ToGet()).ToList(),
+            Messages.Select(x => x.ToGet()).ToList()
         );
     }
 

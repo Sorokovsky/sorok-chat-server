@@ -19,6 +19,9 @@ public class ChatsRepository : IChatsRepository
     public async Task<Result<Chat>> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {
         var result = await _context.Chats.AsNoTracking()
+            .Include(chat => chat.Members)
+            .Include(chat => chat.Messages)
+            .ThenInclude(chatMessage => chatMessage.Author)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         if (result is null) return Result.Failure<Chat>(NotFoundMessage);
         return Result.Success(Chat.FromEntity(result));
@@ -27,6 +30,9 @@ public class ChatsRepository : IChatsRepository
     public async Task<Result<Chat>> GetByTitleAsync(string title, CancellationToken cancellationToken = default)
     {
         var result = await _context.Chats.AsNoTracking()
+            .Include(chat => chat.Members)
+            .Include(chat => chat.Messages)
+            .ThenInclude(chatMessage => chatMessage.Author)
             .FirstOrDefaultAsync(x => x.Title.Value == title, cancellationToken);
         if (result is null) return Result.Failure<Chat>(NotFoundMessage);
         return Result.Success(Chat.FromEntity(result));
@@ -35,6 +41,9 @@ public class ChatsRepository : IChatsRepository
     public async Task<List<Chat>> GetByUserAsync(long userId, CancellationToken cancellationToken = default)
     {
         return await _context.Chats.AsNoTracking()
+            .Include(chat => chat.Members)
+            .Include(chat => chat.Messages)
+            .ThenInclude(chatMessage => chatMessage.Author)
             .Where(chat => chat.Members.Any(member => member.Id == userId))
             .Select(chat => Chat.FromEntity(chat))
             .ToListAsync(cancellationToken);
@@ -46,6 +55,16 @@ public class ChatsRepository : IChatsRepository
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
         try
         {
+            entity.Members.ForEach(member =>
+            {
+                if (_context.Entry(member).State != EntityState.Detached)
+                    _context.Entry(member).State = EntityState.Unchanged;
+            });
+            entity.Messages.ForEach(message =>
+            {
+                if (_context.Entry(message).State != EntityState.Detached)
+                    _context.Entry(message).State = EntityState.Unchanged;
+            });
             var created = await _context.Chats.AddAsync(entity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
@@ -53,6 +72,7 @@ public class ChatsRepository : IChatsRepository
         }
         catch (Exception exception)
         {
+            Console.WriteLine(exception);
             await transaction.RollbackAsync(cancellationToken);
             return Result.Failure<Chat>(exception.Message);
         }
@@ -65,16 +85,28 @@ public class ChatsRepository : IChatsRepository
         var entity = chat.ToEntity();
         entity.Id = id;
         entity.UpdatedAt = DateTime.UtcNow;
+        entity.Members.ForEach(member =>
+        {
+            if (_context.Entry(member).State != EntityState.Detached)
+                _context.Entry(member).State = EntityState.Unchanged;
+        });
+        var newMessages = entity.Messages.Where(m => m.Id == 0).ToList();
+
+        foreach (var message in newMessages) _context.Entry(message.Author).State = EntityState.Unchanged;
+
+        if (newMessages.Any())
+            await _context.Messages.AddRangeAsync(newMessages, cancellationToken);
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
         try
         {
-            var updated = _context.Chats.Update(entity);
+            _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
-            return Result.Success(Chat.FromEntity(updated.Entity));
+            return Result.Success(Chat.FromEntity(entity));
         }
         catch (Exception exception)
         {
+            Console.WriteLine(exception);
             await transaction.RollbackAsync(cancellationToken);
             return Result.Failure<Chat>(exception.Message);
         }

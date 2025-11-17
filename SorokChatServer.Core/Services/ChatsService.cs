@@ -109,8 +109,8 @@ public class ChatsService : IChatsService
         var chat = candidate.Value.ToEntity();
         var titleResult = Title.Create(updatedChat.Title);
         var descriptionResult = Description.Create(updatedChat.Description);
-        if (titleResult.IsFailure) chat.Title = titleResult.Value;
-        if (descriptionResult.IsFailure) chat.Description = descriptionResult.Value;
+        if (titleResult.IsSuccess) chat.Title = titleResult.Value;
+        if (descriptionResult.IsSuccess) chat.Description = descriptionResult.Value;
         return await _chatsRepository.UpdateAsync(id, Chat.FromEntity(chat), cancellationToken);
     }
 
