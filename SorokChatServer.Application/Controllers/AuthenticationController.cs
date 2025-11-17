@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SorokChatServer.Logic.Contracts;
 using SorokChatServer.Logic.Services;
 
@@ -42,8 +43,10 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpGet("get-me")]
-    public async Task<IActionResult> GetMe(CancellationToken cancellationToken = default)
+    [Authorize]
+    public async Task<IActionResult> GetMe([FromServices] ICurrentUserService currentUser,
+        CancellationToken cancellationToken = default)
     {
-        return Ok();
+        return Ok(currentUser.Current!.ToGet());
     }
 }

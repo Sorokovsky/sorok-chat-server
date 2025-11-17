@@ -1,14 +1,14 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication;
 using SorokChatServer.Application.Conventions;
-using SorokChatServer.Core.Middlewares;
+using SorokChatServer.Core.Handlers;
 using SorokChatServer.Core.Options;
 using SorokChatServer.Core.Services;
 using SorokChatServer.Logic.Repositories;
 using SorokChatServer.Logic.Services;
 using SorokChatServer.Postgres;
 using SorokChatServer.Postgres.Repositories;
+using AuthenticationService = SorokChatServer.Core.Services.AuthenticationService;
+using IAuthenticationService = SorokChatServer.Logic.Services.IAuthenticationService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,24 +19,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<ArgonOptions>(builder.Configuration.GetSection(nameof(ArgonOptions)));
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
-var jwtOptions = builder.Configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
-var key = Encoding.UTF8.GetBytes(jwtOptions!.SecretKey);
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = jwtOptions.Issuer,
-            ValidateAudience = true,
-            ValidAudience = jwtOptions.Audience,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-            ClockSkew = TimeSpan.FromMinutes(1)
-        };
-    });
+builder.Services.AddAuthentication(nameof(JwtHandler))
+    .AddScheme<AuthenticationSchemeOptions, JwtHandler>(nameof(JwtHandler), null);
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<IPasswordHasher, Argon2PasswordHasher>();
 builder.Services.AddScoped<DatabaseContext>();
@@ -46,6 +31,7 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddSingleton<ITokenSerializerService, JwtSerializerService>();
 builder.Services.AddSingleton<IAccessTokenStorage, AccessTokenStorage>();
 builder.Services.AddSingleton<IRefreshTokenStorage, RefreshTokenStorage>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 var app = builder.Build();
 
@@ -54,10 +40,9 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseMiddleware<JwtAuthenticationMiddleware>();
 
 app.Run();

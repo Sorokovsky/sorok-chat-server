@@ -22,7 +22,7 @@ public class RefreshTokenStorage : IRefreshTokenStorage
         {
             HttpOnly = true,
             Secure = true,
-            SameSite = SameSiteMode.None,
+            SameSite = SameSiteMode.Lax,
             Domain = null,
             Path = "/",
             MaxAge = token.ExpiresAt - token.CreatedAt
@@ -39,7 +39,13 @@ public class RefreshTokenStorage : IRefreshTokenStorage
 
     public Task ClearTokenAsync(HttpResponse response, CancellationToken cancellationToken = default)
     {
-        response.Cookies.Delete(CookieName);
+        response.Cookies.Delete(CookieName, new CookieOptions
+        {
+            Secure = true,
+            SameSite = SameSiteMode.Lax,
+            Domain = null,
+            Path = "/"
+        });
         return Task.CompletedTask;
     }
 }
