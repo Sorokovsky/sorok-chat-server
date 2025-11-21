@@ -57,12 +57,12 @@ public class ChatsRepository : IChatsRepository
         {
             entity.Members.ForEach(member =>
             {
-                if (_context.Entry(member).State != EntityState.Detached)
+                if (_context.Entry(member).State != EntityState.Unchanged)
                     _context.Entry(member).State = EntityState.Unchanged;
             });
             entity.Messages.ForEach(message =>
             {
-                if (_context.Entry(message).State != EntityState.Detached)
+                if (_context.Entry(message).State != EntityState.Unchanged)
                     _context.Entry(message).State = EntityState.Unchanged;
             });
             var created = await _context.Chats.AddAsync(entity, cancellationToken);
