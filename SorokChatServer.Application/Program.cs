@@ -35,6 +35,15 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IMessagesRepository, MessagesRepository>();
 builder.Services.AddScoped<IChatsRepository, ChatsRepository>();
 builder.Services.AddScoped<IChatsService, ChatsService>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllPermit", corsPolicyBuilder =>
+    {
+        corsPolicyBuilder.AllowAnyOrigin();
+        corsPolicyBuilder.AllowAnyMethod();
+        corsPolicyBuilder.AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
@@ -45,6 +54,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors("AllPermit");
 
 app.MapControllers();
 
