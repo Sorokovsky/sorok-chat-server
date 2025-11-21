@@ -58,9 +58,7 @@ public class ChatsService : IChatsService
         if (user is null) return Result.Failure<Chat>(UserNotInChat);
         var messageResult = Message.Create(createdMessage.Text, createdMessage.Mac, user);
         if (messageResult.IsFailure) return Result.Failure<Chat>(messageResult.Error);
-        var createdMessageResult = await _messagesRepository.CreateAsync(messageResult.Value, cancellationToken);
-        if (createdMessageResult.IsFailure) return Result.Failure<Chat>(createdMessageResult.Error);
-        chat.AddMessage(createdMessageResult.Value);
+        chat.AddMessage(messageResult.Value);
         return await _chatsRepository.UpdateAsync(chatId, chat, cancellationToken);
     }
 

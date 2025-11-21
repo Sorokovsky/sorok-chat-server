@@ -85,17 +85,10 @@ public class ChatsRepository : IChatsRepository
         var entity = chat.ToEntity();
         entity.Id = id;
         entity.UpdatedAt = DateTime.UtcNow;
-        entity.Members.ForEach(member =>
+        entity.Messages.ForEach(x =>
         {
-            if (_context.Entry(member).State != EntityState.Detached)
-                _context.Entry(member).State = EntityState.Unchanged;
+            if (x.Id == 0) _context.Entry(x).State = EntityState.Added;
         });
-        var newMessages = entity.Messages.Where(m => m.Id == 0).ToList();
-
-        foreach (var message in newMessages) _context.Entry(message.Author).State = EntityState.Unchanged;
-
-        if (newMessages.Any())
-            await _context.Messages.AddRangeAsync(newMessages, cancellationToken);
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
         try
         {
