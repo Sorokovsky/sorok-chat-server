@@ -12,13 +12,14 @@ public class User : Base
         DateTime updatedAt,
         Name name,
         Email email,
-        HashedPassword hashedPassword
+        HashedPassword hashedPassword,
+        string macSecret
     ) : base(id, createdAt, updatedAt)
     {
         Name = name;
         Email = email;
         Password = hashedPassword;
-        MacSecret = Guid.NewGuid().ToString();
+        MacSecret = macSecret;
     }
 
     public Name Name { get; }
@@ -55,7 +56,8 @@ public class User : Base
                 DateTime.UtcNow,
                 nameResult.Value,
                 emailResult.Value,
-                hashedPassword
+                hashedPassword,
+                Guid.NewGuid().ToString()
             )
         );
     }
@@ -68,7 +70,8 @@ public class User : Base
             entity.UpdatedAt,
             entity.Name,
             entity.Email,
-            entity.Password
+            entity.Password,
+            entity.MacSecret
         );
     }
 
