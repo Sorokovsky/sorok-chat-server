@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using SorokChatServer.Application.Conventions;
+using SorokChatServer.Application.Hubs;
 using SorokChatServer.Core.Handlers;
 using SorokChatServer.Core.Options;
 using SorokChatServer.Core.Services;
@@ -35,6 +36,8 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IMessagesRepository, MessagesRepository>();
 builder.Services.AddScoped<IChatsRepository, ChatsRepository>();
 builder.Services.AddScoped<IChatsService, ChatsService>();
+builder.Services.AddSignalR()
+    .AddHubOptions<ChatsHub>(options => { options.EnableDetailedErrors = true; });
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllPermit", corsPolicyBuilder =>
@@ -55,6 +58,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllPermit");
+app.MapHub<ChatsHub>("/chats").RequireAuthorization();
 
 app.MapControllers();
 
