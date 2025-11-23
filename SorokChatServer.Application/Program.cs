@@ -1,4 +1,7 @@
+using System.Text;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using SorokChatServer.Application.Conventions;
 using SorokChatServer.Application.Hubs;
 using SorokChatServer.Core.Handlers;
@@ -22,7 +25,33 @@ builder.Services.Configure<ArgonOptions>(builder.Configuration.GetSection(nameof
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(nameof(JwtHandler))
-    .AddScheme<AuthenticationSchemeOptions, JwtHandler>(nameof(JwtHandler), null);
+    .AddScheme<AuthenticationSchemeOptions, JwtHandler>(nameof(JwtHandler), null)
+    .AddJwtBearer(options =>
+    {
+        var jwtOptions = builder.Configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtOptions!.Issuer,
+            ValidAudience = jwtOptions.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                if (!string.IsNullOrEmpty(accessToken) && context.Request.Path.StartsWithSegments("/messages"))
+                    context.Token = accessToken;
+
+                return Task.CompletedTask;
+            }
+        };
+    });
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<IPasswordHasher, Argon2PasswordHasher>();
 builder.Services.AddScoped<DatabaseContext>();
