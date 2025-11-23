@@ -58,7 +58,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllPermit");
-app.MapHub<ChatsHub>("/chats").RequireAuthorization();
+app.MapHub<ChatsHub>("/messages").RequireAuthorization();
 
 app.MapControllers();
 
