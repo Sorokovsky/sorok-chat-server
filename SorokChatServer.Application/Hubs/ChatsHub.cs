@@ -54,7 +54,7 @@ public class ChatsHub : PrivateHub<IChatsHub>
             if (createdMessage is null) return;
             await Clients
                 .Group(chatId.ToString())
-                .ReceiveMessageAsync(createdMessage.ToGet(), chatId, Context.ConnectionAborted);
+                .ReceiveMessageAsync(createdMessage.ToGet(), chatId);
         }
     }
 }
