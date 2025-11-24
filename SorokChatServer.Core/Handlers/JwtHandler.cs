@@ -22,7 +22,8 @@ public class JwtHandler : AuthenticationHandler<AuthenticationSchemeOptions>
         ILoggerFactory logger,
         UrlEncoder encoder,
         ISystemClock clock, IUsersService usersService, IAccessTokenStorage accessTokenStorage,
-        IRefreshTokenStorage refreshTokenStorage, IOptions<JwtOptions> jwtOptions)
+        IRefreshTokenStorage refreshTokenStorage, IOptions<JwtOptions> jwtOptions,
+        ITokenSerializerService tokenSerializerService)
         : base(options, logger, encoder, clock)
     {
         _usersService = usersService;

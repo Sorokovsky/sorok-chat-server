@@ -24,12 +24,18 @@ public class AccessTokenStorage : IAccessTokenStorage
 
     public async Task<Token?> GetTokenAsync(HttpRequest request, CancellationToken cancellationToken = default)
     {
-        var header = request.Headers[Authorization].FirstOrDefault() ?? string.Empty;
-        var stringToken = header.Replace(Bearer, string.Empty);
+        string? rawToken = null;
+        var authorizationHeader = request.Headers[Authorization].FirstOrDefault();
+        if (!string.IsNullOrEmpty(authorizationHeader) &&
+            authorizationHeader.StartsWith(Bearer, StringComparison.OrdinalIgnoreCase))
+            rawToken = authorizationHeader[Bearer.Length..].Trim();
 
-        var result = await _tokenSerializerService.DeserializeTokenAsync(stringToken, cancellationToken);
-        if (result.IsFailure) return null;
-        return result.Value;
+        if (string.IsNullOrEmpty(rawToken) && request.Query.ContainsKey("access_token"))
+            rawToken = request.Query["access_token"].FirstOrDefault();
+
+        if (string.IsNullOrEmpty(rawToken)) return null;
+        var result = await _tokenSerializerService.DeserializeTokenAsync(rawToken, cancellationToken);
+        return result.IsSuccess ? result.Value : null;
     }
 
     public Task ClearTokenAsync(HttpResponse response, CancellationToken cancellationToken = default)
