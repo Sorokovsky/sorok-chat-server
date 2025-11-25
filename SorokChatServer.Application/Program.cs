@@ -20,6 +20,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<ArgonOptions>(builder.Configuration.GetSection(nameof(ArgonOptions)));
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
+builder.Services.Configure<DiffieHellmanOptions>(builder.Configuration.GetSection(nameof(DiffieHellmanOptions)));
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(nameof(JwtHandler))
     .AddScheme<AuthenticationSchemeOptions, JwtHandler>(nameof(JwtHandler), null);
@@ -32,6 +33,7 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddSingleton<ITokenSerializerService, JwtSerializerService>();
 builder.Services.AddSingleton<IAccessTokenStorage, AccessTokenStorage>();
 builder.Services.AddSingleton<IRefreshTokenStorage, RefreshTokenStorage>();
+builder.Services.AddSingleton<IDiffieHellmanService, DiffieHellmanService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IMessagesRepository, MessagesRepository>();
 builder.Services.AddScoped<IChatsRepository, ChatsRepository>();
