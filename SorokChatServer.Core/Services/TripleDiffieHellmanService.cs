@@ -25,10 +25,20 @@ public class TripleDiffieHellmanService : ITripleDiffieHellmanService
         var first = firstKey.ToByteArray(true, true);
         var second = secondKey.ToByteArray(true, true);
         var third = thirdKey.ToByteArray(true, true);
-        var bytes = new byte[first.Length + second.Length + third.Length];
-        Buffer.BlockCopy(first, 0, bytes, 0, first.Length);
-        Buffer.BlockCopy(second, 0, bytes, first.Length, second.Length);
-        Buffer.BlockCopy(third, 0, bytes, first.Length + second.Length, third.Length);
+        var bytes = MergeBytes(first, second, third);
         return _keyDerivationFunction.GenerateKey(bytes);
+    }
+
+    private static byte[] MergeBytes(params byte[][] arrays)
+    {
+        var result = new byte[arrays.Sum(a => a.Length)];
+        var length = 0;
+        foreach (var array in arrays)
+        {
+            Buffer.BlockCopy(array, 0, result, length, array.Length);
+            length += array.Length;
+        }
+
+        return result;
     }
 }
