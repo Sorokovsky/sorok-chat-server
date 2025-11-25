@@ -1,20 +1,19 @@
-﻿using SorokChatServer.Logic.Contracts;
+﻿using Microsoft.AspNetCore.SignalR;
+using SorokChatServer.Logic.Contracts;
 using SorokChatServer.Logic.Hubs;
 using SorokChatServer.Logic.Services;
 
 namespace SorokChatServer.Application.Hubs;
 
-public class ChatsHub : PrivateHub<IChatsHub>
+public class ChatsHub : Hub<IChatsHub>
 {
     private readonly IChatsService _chatsService;
     private readonly ICurrentUserService _currentUserService;
 
     public ChatsHub(
-        IUsersService usersService,
-        ITokenSerializerService tokenSerializerService,
         IChatsService chatsService,
         ICurrentUserService currentUserService
-    ) : base(usersService, tokenSerializerService)
+    )
     {
         _chatsService = chatsService;
         _currentUserService = currentUserService;
