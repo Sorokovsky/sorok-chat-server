@@ -34,12 +34,14 @@ builder.Services.AddSingleton<ITokenSerializerService, JwtSerializerService>();
 builder.Services.AddSingleton<IAccessTokenStorage, AccessTokenStorage>();
 builder.Services.AddSingleton<IRefreshTokenStorage, RefreshTokenStorage>();
 builder.Services.AddSingleton<IDiffieHellmanService, DiffieHellmanService>();
+builder.Services.AddSingleton<ITripleDiffieHellmanService, TripleDiffieHellmanService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IMessagesRepository, MessagesRepository>();
 builder.Services.AddScoped<IChatsRepository, ChatsRepository>();
 builder.Services.AddScoped<IChatsService, ChatsService>();
 builder.Services.AddSignalR()
-    .AddHubOptions<ChatsHub>(options => { options.EnableDetailedErrors = true; });
+    .AddHubOptions<ChatsHub>(options => { options.EnableDetailedErrors = true; })
+    .AddMessagePackProtocol();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllPermit", corsPolicyBuilder =>
