@@ -8,16 +8,24 @@ namespace SorokChatServer.Application.Hubs;
 public class ExchangeHub : Hub<IExchangeHub>
 {
     private readonly IDiffieHellmanService _diffieHellmanService;
+    private readonly ITripleDiffieHellmanService _tripleDiffieHellmanService;
 
-    public ExchangeHub(IDiffieHellmanService diffieHellmanService, IChatsService chatsService)
+    public ExchangeHub(
+        IDiffieHellmanService diffieHellmanService,
+        ITripleDiffieHellmanService tripleDiffieHellmanService
+    )
     {
         _diffieHellmanService = diffieHellmanService;
+        _tripleDiffieHellmanService = tripleDiffieHellmanService;
     }
 
-    public async Task Exchange(BigInteger staticPublicKey, BigInteger ephemeralPublicKey)
+    public async Task Exchange(BigInteger otherStaticPublicKey, BigInteger otherEphemeralPublicKey)
     {
-        var staticKeys = _diffieHellmanService.GenerateKeysPair();
-        var ephemeralKeys = _diffieHellmanService.GenerateKeysPair();
-        await Clients.Caller.ReceiveExchange(staticKeys.PublicKey, ephemeralKeys.PublicKey);
+        var myStaticKeys = _diffieHellmanService.GenerateKeysPair();
+        var myEphemeralKeys = _diffieHellmanService.GenerateKeysPair();
+        var staticKeys = myStaticKeys with { PublicKey = otherStaticPublicKey };
+        var ephemeralKeys = myEphemeralKeys with { PublicKey = otherEphemeralPublicKey };
+        var sharedKey = _tripleDiffieHellmanService.GenerateSharedKey(staticKeys, ephemeralKeys);
+        await Clients.Caller.ReceiveExchange(myStaticKeys.PublicKey, myEphemeralKeys.PublicKey);
     }
 }
