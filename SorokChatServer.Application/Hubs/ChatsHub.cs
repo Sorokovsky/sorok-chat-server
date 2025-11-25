@@ -56,4 +56,18 @@ public class ChatsHub : Hub<IChatsHub>
                 .ReceiveMessageAsync(createdMessage.ToGet(), chatId);
         }
     }
+
+    public async Task JoinToChatAsync(long chatId)
+    {
+        if (_currentUserService.IsAuthenticated is false || _currentUserService.Current is null)
+        {
+            Context.Abort();
+        }
+        else
+        {
+            var result = await _chatsService.GetByIdAsync(chatId);
+            if (result.IsFailure) return;
+            await Groups.AddToGroupAsync(Context.ConnectionId, result.Value.Id.ToString(), Context.ConnectionAborted);
+        }
+    }
 }
