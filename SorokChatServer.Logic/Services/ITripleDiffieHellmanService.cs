@@ -4,5 +4,5 @@ namespace SorokChatServer.Logic.Services;
 
 public interface ITripleDiffieHellmanService
 {
-    public string GenerateSharedKey(DiffieHellmanKeysPair staticKeys, DiffieHellmanKeysPair ephemeralKeys);
+    public byte[] GenerateSharedKey(DiffieHellmanKeysPair staticKeys, DiffieHellmanKeysPair ephemeralKeys);
 }
