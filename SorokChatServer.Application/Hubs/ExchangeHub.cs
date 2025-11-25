@@ -26,6 +26,6 @@ public class ExchangeHub : Hub<IExchangeHub>
         var staticKeys = myStaticKeys with { PublicKey = otherStaticPublicKey };
         var ephemeralKeys = myEphemeralKeys with { PublicKey = otherEphemeralPublicKey };
         var sharedKey = _tripleDiffieHellmanService.GenerateSharedKey(staticKeys, ephemeralKeys);
-        await Clients.Caller.ReceiveExchange(myStaticKeys.PublicKey, myEphemeralKeys.PublicKey);
+        await Clients.Caller.ReceiveExchangeAsync(myStaticKeys.PublicKey, myEphemeralKeys.PublicKey);
     }
 }
