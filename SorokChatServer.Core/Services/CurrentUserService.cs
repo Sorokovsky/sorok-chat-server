@@ -7,12 +7,10 @@ namespace SorokChatServer.Core.Services;
 public class CurrentUserService : ICurrentUserService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IUsersService _usersService;
 
-    public CurrentUserService(IHttpContextAccessor httpContextAccessor, IUsersService usersService)
+    public CurrentUserService(IHttpContextAccessor httpContextAccessor)
     {
         _httpContextAccessor = httpContextAccessor;
-        _usersService = usersService;
     }
 
     public bool IsAuthenticated => _httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated ?? false;
