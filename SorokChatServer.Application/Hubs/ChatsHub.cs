@@ -39,7 +39,7 @@ public class ChatsHub : PrivateHub<IChatsHub>
         await base.OnConnectedAsync();
     }
 
-    public async Task SendMessage(CreateMessage message, long chatId)
+    public async Task SendMessageAsync(CreateMessage message, long chatId)
     {
         if (_currentUserService.IsAuthenticated is false || _currentUserService.Current is null)
         {

@@ -42,9 +42,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllPermit", corsPolicyBuilder =>
     {
-        corsPolicyBuilder.AllowAnyOrigin();
+        corsPolicyBuilder.WithOrigins("http://localhost:4200");
         corsPolicyBuilder.AllowAnyMethod();
         corsPolicyBuilder.AllowAnyHeader();
+        corsPolicyBuilder.AllowCredentials();
     });
 });
 
@@ -53,11 +54,11 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseCors("AllPermit");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("AllPermit");
 app.MapHub<ChatsHub>("/messages").RequireAuthorization();
 
 app.MapControllers();
