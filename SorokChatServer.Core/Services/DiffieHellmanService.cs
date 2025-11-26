@@ -49,7 +49,6 @@ public class DiffieHellmanService : IDiffieHellmanService
 
     private BigInteger GeneratePrivateKey()
     {
-        const int extraBits = 64;
         var byteLength = _p.GetByteCount();
         var buffer = new byte[byteLength];
         BigInteger privateKey;
@@ -59,10 +58,9 @@ public class DiffieHellmanService : IDiffieHellmanService
             buffer[^1] &= 0x7F;
             buffer[byteLength - 1] &= 0x7F;
 
-            privateKey = new BigInteger(buffer.AsSpan(0, byteLength), true, true);
-            privateKey %= _p - 2;
-            privateKey += 2;
-        } while (privateKey >= _p - 1);
+            privateKey = new BigInteger(buffer, true, true);
+            privateKey = privateKey % (_p - 2) + 2;
+        } while (privateKey >= _p - 1 || privateKey < 2);
 
         return privateKey;
     }
