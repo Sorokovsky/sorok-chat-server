@@ -113,4 +113,13 @@ public class ChatsRepository : IChatsRepository
             .ExecuteDeleteAsync(cancellationToken);
         return candidate;
     }
+
+    public async Task<Result<Chat>> GetLastCreatedAsync(CancellationToken cancellationToken = default)
+    {
+        var candidate = await _context.Chats.AsNoTracking()
+            .OrderByDescending(x => x.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (candidate is null) return Result.Failure<Chat>(NotFoundMessage);
+        return Result.Success(Chat.FromEntity(candidate));
+    }
 }

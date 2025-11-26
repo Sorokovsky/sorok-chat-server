@@ -1,7 +1,7 @@
-﻿using SorokChatServer.Logic.Entities;
-using SorokChatServer.Logic.Models;
+﻿using SorokChatServer.Logic.Models;
+using SorokChatServer.Postgres.Entities;
 
-namespace SorokChatServer.Postgres.Entities;
+namespace SorokChatServer.Logic.Entities;
 
 public class ChatEntity : BaseEntity
 {
@@ -16,7 +16,9 @@ public class ChatEntity : BaseEntity
         Title title,
         Description description,
         List<UserEntity> members,
-        List<MessageEntity> messages
+        List<MessageEntity> messages,
+        string staticPublicKey,
+        string ephemeralPublicKey
     )
     {
         Id = id;
@@ -35,4 +37,8 @@ public class ChatEntity : BaseEntity
     public List<UserEntity> Members { get; set; }
 
     public List<MessageEntity> Messages { get; set; }
+
+    public string EphemeralPublicKey { get; set; }
+
+    public string StaticPublicKey { get; set; }
 }

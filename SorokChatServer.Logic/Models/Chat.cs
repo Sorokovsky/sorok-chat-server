@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using SorokChatServer.Logic.Contracts;
-using SorokChatServer.Postgres.Entities;
+using SorokChatServer.Logic.Entities;
 
 namespace SorokChatServer.Logic.Models;
 
@@ -16,7 +16,9 @@ public class Chat : Base
         Title title,
         Description description,
         IEnumerable<User> members,
-        IEnumerable<Message> messages
+        IEnumerable<Message> messages,
+        string staticPublicKey,
+        string ephemeralPublicKey
     )
         : base(id, createdAt, updatedAt)
     {
@@ -24,6 +26,8 @@ public class Chat : Base
         Description = description;
         _members = members.ToList();
         _messages = messages.ToList();
+        StaticPublicKey = staticPublicKey;
+        EphemeralPublicKey = ephemeralPublicKey;
     }
 
     public Title Title { get; }
@@ -32,6 +36,10 @@ public class Chat : Base
     public IReadOnlyList<Message> Messages => _messages;
 
     public Description Description { get; }
+
+    public string StaticPublicKey { get; }
+
+    public string EphemeralPublicKey { get; }
 
     public void AddMember(User user)
     {
@@ -53,7 +61,8 @@ public class Chat : Base
         _messages.Remove(message);
     }
 
-    public static Result<Chat> Create(string title, string description)
+    public static Result<Chat> Create(string title, string description, string staticPublicKey,
+        string ephemeralPublicKey)
     {
         var titleResult = Title.Create(title);
         var descriptionResult = Description.Create(description);
@@ -66,7 +75,9 @@ public class Chat : Base
                 titleResult.Value,
                 descriptionResult.Value,
                 [],
-                []
+                [],
+                staticPublicKey,
+                ephemeralPublicKey
             )
         );
     }
@@ -80,7 +91,9 @@ public class Chat : Base
             entity.Title,
             entity.Description,
             entity.Members is not null ? entity.Members.Select(User.FromEntity).ToList() : [],
-            entity.Messages is not null ? entity.Messages.Select(Message.FromEntity).ToList() : []
+            entity.Messages is not null ? entity.Messages.Select(Message.FromEntity).ToList() : [],
+            entity.StaticPublicKey,
+            entity.EphemeralPublicKey
         );
     }
 
@@ -93,7 +106,9 @@ public class Chat : Base
             Title.Value,
             Description.Value,
             Members.Select(x => x.ToGet()).ToList(),
-            Messages.Select(x => x.ToGet()).ToList()
+            Messages.Select(x => x.ToGet()).ToList(),
+            StaticPublicKey,
+            EphemeralPublicKey
         );
     }
 
@@ -106,7 +121,9 @@ public class Chat : Base
             Title,
             Description,
             Members.Select(x => x.ToEntity()).ToList(),
-            Messages.Select(x => x.ToEntity()).ToList()
+            Messages.Select(x => x.ToEntity()).ToList(),
+            StaticPublicKey,
+            EphemeralPublicKey
         );
     }
 }

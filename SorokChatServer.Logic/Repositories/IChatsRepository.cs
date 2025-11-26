@@ -11,4 +11,6 @@ public interface IChatsRepository
     public Task<Result<Chat>> CreateAsync(Chat chat, CancellationToken cancellationToken = default);
     public Task<Result<Chat>> UpdateAsync(long id, Chat chat, CancellationToken cancellationToken = default);
     public Task<Result<Chat>> DeleteAsync(long id, CancellationToken cancellationToken = default);
+
+    public Task<Result<Chat>> GetLastCreatedAsync(CancellationToken cancellationToken = default);
 }

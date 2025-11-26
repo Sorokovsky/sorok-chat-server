@@ -15,8 +15,8 @@ public class DiffieHellmanService : IDiffieHellmanService
     public DiffieHellmanService(IOptions<DiffieHellmanOptions> options)
     {
         var opts = options.Value;
-        _g = opts.G;
-        _p = opts.P;
+        _g = BigInteger.Parse(opts.G);
+        _p = new BigInteger(Convert.FromHexString(opts.P), true, true);
 
         if (_p <= 2)
             throw new InvalidOperationException("P має бути більшим за 2");

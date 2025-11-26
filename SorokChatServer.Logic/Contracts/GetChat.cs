@@ -7,5 +7,7 @@ public record GetChat(
     string Title,
     string Description,
     List<GetUser> Members,
-    List<GetMessage> Messages
+    List<GetMessage> Messages,
+    string StaticPublicKey,
+    string EphemeralPublicKey
 );

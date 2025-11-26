@@ -12,15 +12,17 @@ public class ChatsService : IChatsService
     private const string MessageNotInChat = "Повідомлення не в чаті";
 
     private readonly IChatsRepository _chatsRepository;
+    private readonly IDiffieHellmanService _diffieHellmanService;
     private readonly IMessagesRepository _messagesRepository;
     private readonly IUsersService _usersService;
 
     public ChatsService(IChatsRepository chatsRepository, IMessagesRepository messagesRepository,
-        IUsersService usersService)
+        IUsersService usersService, IDiffieHellmanService diffieHellmanService)
     {
         _chatsRepository = chatsRepository;
         _messagesRepository = messagesRepository;
         _usersService = usersService;
+        _diffieHellmanService = diffieHellmanService;
     }
 
     public async Task<Result<Chat>> GetByIdAsync(long id, CancellationToken cancellationToken = default)
@@ -41,7 +43,21 @@ public class ChatsService : IChatsService
     public async Task<Result<Chat>> CreateAsync(CreateChat createdChat, User author,
         CancellationToken cancellationToken = default)
     {
-        var chatResult = Chat.Create(createdChat.Title, createdChat.Description);
+        var lastChat = await _chatsRepository.GetLastCreatedAsync(cancellationToken);
+        string publicStatic;
+        if (lastChat.IsFailure)
+        {
+            var keys = _diffieHellmanService.GenerateKeysPair();
+            publicStatic = keys.PublicKey.ToString();
+        }
+        else
+        {
+            publicStatic = lastChat.Value.StaticPublicKey;
+        }
+
+        var ephemeralKeys = _diffieHellmanService.GenerateKeysPair();
+        var chatResult = Chat.Create(createdChat.Title, createdChat.Description, publicStatic,
+            ephemeralKeys.PublicKey.ToString());
         if (chatResult.IsFailure) return chatResult;
         var chat = chatResult.Value;
         chat.AddMember(author);
