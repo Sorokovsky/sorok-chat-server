@@ -28,6 +28,8 @@ public class ChatEntity : BaseEntity
         Description = description;
         Members = members;
         Messages = messages;
+        StaticPublicKey = staticPublicKey;
+        EphemeralPublicKey = ephemeralPublicKey;
     }
 
     public Title Title { get; set; }
