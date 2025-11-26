@@ -41,8 +41,7 @@ builder.Services.AddScoped<IMessagesRepository, MessagesRepository>();
 builder.Services.AddScoped<IChatsRepository, ChatsRepository>();
 builder.Services.AddScoped<IChatsService, ChatsService>();
 builder.Services.AddSignalR()
-    .AddHubOptions<ChatsHub>(options => { options.EnableDetailedErrors = true; })
-    .AddMessagePackProtocol();
+    .AddHubOptions<ChatsHub>(options => { options.EnableDetailedErrors = true; });
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllPermit", corsPolicyBuilder =>
