@@ -5,7 +5,7 @@ namespace SorokChatServer.Logic.Models;
 
 public partial class Email : ValueObject
 {
-    public const int MAX_LENGTH = 20;
+    public const int MaxLength = 50;
 
     private Email(string value)
     {
@@ -31,7 +31,7 @@ public partial class Email : ValueObject
 
     private static bool IsValidEmail(string? email)
     {
-        if (string.IsNullOrWhiteSpace(email) || email.Length > MAX_LENGTH) return false;
+        if (string.IsNullOrWhiteSpace(email) || email.Length > MaxLength) return false;
         return EmailRegex().IsMatch(email);
     }
 

@@ -14,7 +14,7 @@ public class UserConfiguration : BaseConfiguration<UserEntity>
         {
             emailBuilder.Property(email => email.Value)
                 .HasColumnName("email")
-                .HasMaxLength(Email.MAX_LENGTH)
+                .HasMaxLength(Email.MaxLength)
                 .IsRequired();
             emailBuilder.WithOwner();
         });
