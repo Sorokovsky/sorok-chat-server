@@ -30,8 +30,13 @@ public class ChatsHub : Hub<IChatsHub>
         {
             var chats = await _chatsService.GetByUserAsync(_currentUserService.Current.Id, Context.ConnectionAborted);
             var tasks = chats
-                .Select(chat =>
-                    Groups.AddToGroupAsync(Context.ConnectionId, chat.Id.ToString(), Context.ConnectionAborted)
+                .Select(chat => Task.Run(async () =>
+                    {
+                        await Groups.AddToGroupAsync(Context.ConnectionId, chat.Id.ToString(),
+                            Context.ConnectionAborted);
+                        await Clients.Group(chat.Id.ToString())
+                            .ConnectedAsync(chat.Id, _currentUserService.Current.Id);
+                    })
                 );
             await Task.WhenAll(tasks);
         }
@@ -67,5 +72,12 @@ public class ChatsHub : Hub<IChatsHub>
             if (result.IsFailure) return;
             await Groups.AddToGroupAsync(Context.ConnectionId, result.Value.Id.ToString(), Context.ConnectionAborted);
         }
+    }
+
+    public async Task SendExchangeAsync(string staticPublicKey, string ephemeralPublicKey, long chatId, long userId)
+    {
+        await Clients
+            .Group(chatId.ToString())
+            .ReceiveExchangeAsync(staticPublicKey, ephemeralPublicKey, userId, chatId);
     }
 }
