@@ -15,10 +15,7 @@ public class ChatEntity : BaseEntity
         DateTime updatedAt,
         Title title,
         Description description,
-        List<UserEntity> members,
-        List<MessageEntity> messages,
-        string staticPublicKey,
-        string ephemeralPublicKey
+        List<UserEntity> members
     )
     {
         Id = id;
@@ -27,9 +24,6 @@ public class ChatEntity : BaseEntity
         Title = title;
         Description = description;
         Members = members;
-        Messages = messages;
-        StaticPublicKey = staticPublicKey;
-        EphemeralPublicKey = ephemeralPublicKey;
     }
 
     public Title Title { get; set; }
@@ -37,10 +31,4 @@ public class ChatEntity : BaseEntity
     public Description Description { get; set; }
 
     public List<UserEntity> Members { get; set; }
-
-    public List<MessageEntity> Messages { get; set; }
-
-    public string EphemeralPublicKey { get; set; }
-
-    public string StaticPublicKey { get; set; }
 }

@@ -11,10 +11,12 @@ namespace SorokChatServer.Application.Controllers;
 public class ChatsController : ControllerBase
 {
     private readonly IChatsService _chatsService;
+    private readonly IUsersService _usersService;
 
-    public ChatsController(IChatsService chatsService)
+    public ChatsController(IChatsService chatsService, IUsersService usersService)
     {
         _chatsService = chatsService;
+        _usersService = usersService;
     }
 
     [HttpGet("by-me")]
@@ -41,11 +43,17 @@ public class ChatsController : ControllerBase
         return Ok(chat.Value.ToGet());
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateChat chat, [FromServices] ICurrentUserService currentUser,
+    [HttpPost("{opponentEmail}")]
+    public async Task<IActionResult> Create([FromBody] CreateChat chat, [FromRoute] string opponentEmail,
+        [FromServices] ICurrentUserService currentUser,
         CancellationToken cancellationToken = default)
     {
-        var createdChat = await _chatsService.CreateAsync(chat, currentUser.Current!, cancellationToken);
+        var opponentResult = await _usersService.GetByEmailAsync(opponentEmail, cancellationToken);
+        if (opponentResult.IsFailure) return BadRequest(opponentResult.Error);
+        if (opponentResult.Value.Id == currentUser.Current!.Id)
+            return BadRequest("Не можна створити чат з самим собою лише.");
+        var createdChat =
+            await _chatsService.CreateAsync(chat, currentUser.Current!, opponentResult.Value, cancellationToken);
         if (createdChat.IsFailure) return BadRequest(createdChat.Error);
         return Created($"/chats/{createdChat.Value.Id}", createdChat.Value.ToGet());
     }
@@ -57,49 +65,6 @@ public class ChatsController : ControllerBase
         var updatedChat = await _chatsService.UpdateAsync(id, chat, cancellationToken);
         if (updatedChat.IsFailure) return BadRequest(updatedChat.Error);
         return Ok(updatedChat.Value.ToGet());
-    }
-
-    [HttpPut("add-member/{chatId:long}/{memberId:long}")]
-    public async Task<IActionResult> AddMember([FromRoute] long chatId, [FromRoute] long memberId,
-        CancellationToken cancellationToken = default)
-    {
-        var chat = await _chatsService.AddUserAsync(chatId, memberId, cancellationToken);
-        if (chat.IsFailure) return BadRequest(chat.Error);
-        return Ok(chat.Value.ToGet());
-    }
-
-    [HttpPut("remove-member/{chatId:long}/{memberId:long}")]
-    public async Task<IActionResult> RemoveMember([FromRoute] long chatId, [FromRoute] long memberId,
-        CancellationToken cancellationToken = default)
-    {
-        var chat = await _chatsService.RemoveUserAsync(chatId, memberId, cancellationToken);
-        if (chat.IsFailure) return BadRequest(chat.Error);
-        return Ok(chat.Value.ToGet());
-    }
-
-    [HttpPut("write-message/{chatId:long}")]
-    public async Task<IActionResult> WriteMessage(
-        [FromRoute] long chatId,
-        [FromServices] ICurrentUserService currentUser,
-        [FromBody] CreateMessage message,
-        CancellationToken cancellationToken = default
-    )
-    {
-        var chat = await _chatsService.AddMessageAsync(chatId, currentUser.Current!.Id, message, cancellationToken);
-        if (chat.IsFailure) return BadRequest(chat.Error);
-        return Ok(chat.Value.ToGet());
-    }
-
-    [HttpPut("remove-message/{chatId:long}/{messageId:long}")]
-    public async Task<IActionResult> RemoveMessage(
-        [FromRoute] long chatId,
-        [FromRoute] long messageId,
-        CancellationToken cancellationToken = default
-    )
-    {
-        var chat = await _chatsService.RemoveMessageAsync(chatId, messageId, cancellationToken);
-        if (chat.IsFailure) return BadRequest(chat.Error);
-        return Ok(chat.Value.ToGet());
     }
 
     [HttpDelete("{id:long}")]

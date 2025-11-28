@@ -15,19 +15,13 @@ public class Chat : Base
         DateTime updatedAt,
         Title title,
         Description description,
-        IEnumerable<User> members,
-        IEnumerable<Message> messages,
-        string staticPublicKey,
-        string ephemeralPublicKey
+        IEnumerable<User> members
     )
         : base(id, createdAt, updatedAt)
     {
         Title = title;
         Description = description;
         _members = members.ToList();
-        _messages = messages.ToList();
-        StaticPublicKey = staticPublicKey;
-        EphemeralPublicKey = ephemeralPublicKey;
     }
 
     public Title Title { get; }
@@ -61,8 +55,7 @@ public class Chat : Base
         _messages.Remove(message);
     }
 
-    public static Result<Chat> Create(string title, string description, string staticPublicKey,
-        string ephemeralPublicKey)
+    public static Result<Chat> Create(string title, string description)
     {
         var titleResult = Title.Create(title);
         var descriptionResult = Description.Create(description);
@@ -74,10 +67,7 @@ public class Chat : Base
                 DateTime.UtcNow,
                 titleResult.Value,
                 descriptionResult.Value,
-                [],
-                [],
-                staticPublicKey,
-                ephemeralPublicKey
+                []
             )
         );
     }
@@ -90,10 +80,7 @@ public class Chat : Base
             entity.UpdatedAt,
             entity.Title,
             entity.Description,
-            entity.Members is not null ? entity.Members.Select(User.FromEntity).ToList() : [],
-            entity.Messages is not null ? entity.Messages.Select(Message.FromEntity).ToList() : [],
-            entity.StaticPublicKey,
-            entity.EphemeralPublicKey
+            entity.Members is not null ? entity.Members.Select(User.FromEntity).ToList() : []
         );
     }
 
@@ -105,10 +92,7 @@ public class Chat : Base
             UpdatedAt,
             Title.Value,
             Description.Value,
-            Members.Select(x => x.ToGet()).ToList(),
-            Messages.Select(x => x.ToGet()).ToList(),
-            StaticPublicKey,
-            EphemeralPublicKey
+            Members.Select(x => x.ToGet()).ToList()
         );
     }
 
@@ -120,10 +104,7 @@ public class Chat : Base
             UpdatedAt,
             Title,
             Description,
-            Members.Select(x => x.ToEntity()).ToList(),
-            Messages.Select(x => x.ToEntity()).ToList(),
-            StaticPublicKey,
-            EphemeralPublicKey
+            Members.Select(x => x.ToEntity()).ToList()
         );
     }
 }

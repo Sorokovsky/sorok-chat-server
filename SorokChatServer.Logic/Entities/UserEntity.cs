@@ -9,8 +9,7 @@ public class UserEntity : BaseEntity
     {
     }
 
-    public UserEntity(long id, DateTime createdAt, DateTime updatedAt, Name name, Email email, HashedPassword password,
-        string macSecret)
+    public UserEntity(long id, DateTime createdAt, DateTime updatedAt, Name name, Email email, HashedPassword password)
     {
         Id = id;
         CreatedAt = createdAt;
@@ -18,7 +17,6 @@ public class UserEntity : BaseEntity
         Name = name;
         Email = email;
         Password = password;
-        MacSecret = macSecret;
     }
 
     public Name Name { get; set; }
@@ -26,6 +24,4 @@ public class UserEntity : BaseEntity
     public Email Email { get; set; }
 
     public HashedPassword Password { get; set; }
-
-    public string MacSecret { get; set; }
 }

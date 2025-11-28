@@ -37,7 +37,6 @@ builder.Services.AddSingleton<IDiffieHellmanService, DiffieHellmanService>();
 builder.Services.AddSingleton<ITripleDiffieHellmanService, TripleDiffieHellmanService>();
 builder.Services.AddSingleton<IKeyDerivationFunction, Sha256DerivationFunction>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-builder.Services.AddScoped<IMessagesRepository, MessagesRepository>();
 builder.Services.AddScoped<IChatsRepository, ChatsRepository>();
 builder.Services.AddScoped<IChatsService, ChatsService>();
 builder.Services.AddSignalR()

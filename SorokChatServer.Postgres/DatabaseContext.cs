@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SorokChatServer.Logic.Entities;
-using SorokChatServer.Postgres.Entities;
 
 namespace SorokChatServer.Postgres;
 
@@ -15,7 +14,6 @@ public class DatabaseContext : DbContext
     }
 
     public DbSet<UserEntity> Users => Set<UserEntity>();
-    public DbSet<MessageEntity> Messages => Set<MessageEntity>();
     public DbSet<ChatEntity> Chats => Set<ChatEntity>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

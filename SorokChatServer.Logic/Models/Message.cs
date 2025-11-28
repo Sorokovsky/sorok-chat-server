@@ -1,18 +1,26 @@
 ﻿using CSharpFunctionalExtensions;
 using SorokChatServer.Logic.Contracts;
-using SorokChatServer.Logic.Entities;
 
 namespace SorokChatServer.Logic.Models;
 
-public class Message : Base
+public class Message
 {
-    private Message(long id, DateTime createdAt, DateTime updatedAt, string text, string mac, User author)
-        : base(id, createdAt, updatedAt)
+    private Message(Guid id, DateTime createdAt, DateTime updatedAt, string text, string mac, User author)
+
     {
+        Id = id;
+        CreatedAt = createdAt;
+        UpdatedAt = updatedAt;
         Text = text;
         Mac = mac;
         Author = author;
     }
+
+    public Guid Id { get; }
+
+    public DateTime CreatedAt { get; }
+
+    public DateTime UpdatedAt { get; }
 
     public string Text { get; }
     public string Mac { get; }
@@ -26,25 +34,13 @@ public class Message : Base
         if (string.IsNullOrWhiteSpace(mac)) return Result.Failure<Message>("Повідомлення не підписаною.");
 
         return Result.Success(new Message(
-                0,
+                Guid.NewGuid(),
                 DateTime.UtcNow,
                 DateTime.UtcNow,
                 text,
                 mac,
                 author
             )
-        );
-    }
-
-    public MessageEntity ToEntity()
-    {
-        return new MessageEntity(
-            Id,
-            CreatedAt,
-            UpdatedAt,
-            Text,
-            Mac,
-            Author.ToEntity()
         );
     }
 
@@ -57,17 +53,6 @@ public class Message : Base
             Text,
             Mac,
             Author.ToGet()
-        );
-    }
-
-    public static Message FromEntity(MessageEntity entity)
-    {
-        return new Message(
-            entity.Id,
-            entity.CreatedAt,
-            entity.UpdatedAt,
-            entity.Text, entity.Mac,
-            User.FromEntity(entity.Author)
         );
     }
 }

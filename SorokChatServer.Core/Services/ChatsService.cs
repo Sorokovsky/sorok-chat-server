@@ -12,17 +12,12 @@ public class ChatsService : IChatsService
     private const string MessageNotInChat = "Повідомлення не в чаті";
 
     private readonly IChatsRepository _chatsRepository;
-    private readonly IDiffieHellmanService _diffieHellmanService;
-    private readonly IMessagesRepository _messagesRepository;
     private readonly IUsersService _usersService;
 
-    public ChatsService(IChatsRepository chatsRepository, IMessagesRepository messagesRepository,
-        IUsersService usersService, IDiffieHellmanService diffieHellmanService)
+    public ChatsService(IChatsRepository chatsRepository, IUsersService usersService)
     {
         _chatsRepository = chatsRepository;
-        _messagesRepository = messagesRepository;
         _usersService = usersService;
-        _diffieHellmanService = diffieHellmanService;
     }
 
     public async Task<Result<Chat>> GetByIdAsync(long id, CancellationToken cancellationToken = default)
@@ -40,55 +35,15 @@ public class ChatsService : IChatsService
         return await _chatsRepository.GetByUserAsync(userId, cancellationToken);
     }
 
-    public async Task<Result<Chat>> CreateAsync(CreateChat createdChat, User author,
+    public async Task<Result<Chat>> CreateAsync(CreateChat createdChat, User author, User opponent,
         CancellationToken cancellationToken = default)
     {
-        var lastChat = await _chatsRepository.GetLastCreatedAsync(cancellationToken);
-        string publicStatic;
-        if (lastChat.IsFailure)
-        {
-            var keys = _diffieHellmanService.GenerateKeysPair();
-            publicStatic = keys.PublicKey.ToString();
-        }
-        else
-        {
-            publicStatic = lastChat.Value.StaticPublicKey;
-        }
-
-        var ephemeralKeys = _diffieHellmanService.GenerateKeysPair();
-        var chatResult = Chat.Create(createdChat.Title, createdChat.Description, publicStatic,
-            ephemeralKeys.PublicKey.ToString());
+        var chatResult = Chat.Create(createdChat.Title, createdChat.Description);
         if (chatResult.IsFailure) return chatResult;
         var chat = chatResult.Value;
         chat.AddMember(author);
+        chat.AddMember(opponent);
         return await _chatsRepository.CreateAsync(chat, cancellationToken);
-    }
-
-    public async Task<Result<Chat>> AddMessageAsync(long chatId, long userId, CreateMessage createdMessage,
-        CancellationToken cancellationToken = default)
-    {
-        var chatResult = await GetByIdAsync(chatId, cancellationToken);
-        if (chatResult.IsFailure) return chatResult;
-        var chat = chatResult.Value;
-        var user = chat.Members.FirstOrDefault(x => x.Id == userId);
-        if (user is null) return Result.Failure<Chat>(UserNotInChat);
-        var messageResult = Message.Create(createdMessage.Text, createdMessage.Mac, user);
-        if (messageResult.IsFailure) return Result.Failure<Chat>(messageResult.Error);
-        chat.AddMessage(messageResult.Value);
-        return await _chatsRepository.UpdateAsync(chatId, chat, cancellationToken);
-    }
-
-    public async Task<Result<Chat>> RemoveMessageAsync(long chatId, long messageId,
-        CancellationToken cancellationToken = default)
-    {
-        var chatResult = await GetByIdAsync(chatId, cancellationToken);
-        if (chatResult.IsFailure) return chatResult;
-        var chat = chatResult.Value;
-        var message = chat.Messages.FirstOrDefault(x => x.Id == messageId);
-        if (message is null) return Result.Failure<Chat>(MessageNotInChat);
-        chat.RemoveMessage(message);
-        await _messagesRepository.DeleteAsync(messageId, cancellationToken);
-        return await _chatsRepository.UpdateAsync(chatId, chat, cancellationToken);
     }
 
     public async Task<Result<Chat>> AddUserAsync(long chatId, long userId,

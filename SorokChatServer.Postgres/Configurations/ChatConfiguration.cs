@@ -29,8 +29,5 @@ public class ChatConfiguration : BaseConfiguration<ChatEntity>
         });
         builder.HasMany(chat => chat.Members)
             .WithMany();
-
-        builder.HasMany(chat => chat.Messages)
-            .WithOne();
     }
 }

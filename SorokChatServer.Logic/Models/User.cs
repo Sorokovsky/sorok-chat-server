@@ -12,14 +12,12 @@ public class User : Base
         DateTime updatedAt,
         Name name,
         Email email,
-        HashedPassword hashedPassword,
-        string macSecret
+        HashedPassword hashedPassword
     ) : base(id, createdAt, updatedAt)
     {
         Name = name;
         Email = email;
         Password = hashedPassword;
-        MacSecret = macSecret;
     }
 
     public Name Name { get; }
@@ -27,8 +25,6 @@ public class User : Base
     public Email Email { get; }
 
     public HashedPassword Password { get; }
-
-    public string MacSecret { get; }
 
     public static Result<User> Create(
         string firstName,
@@ -56,8 +52,7 @@ public class User : Base
                 DateTime.UtcNow,
                 nameResult.Value,
                 emailResult.Value,
-                hashedPassword,
-                Guid.NewGuid().ToString()
+                hashedPassword
             )
         );
     }
@@ -70,8 +65,7 @@ public class User : Base
             entity.UpdatedAt,
             entity.Name,
             entity.Email,
-            entity.Password,
-            entity.MacSecret
+            entity.Password
         );
     }
 
@@ -83,14 +77,12 @@ public class User : Base
             UpdatedAt,
             Name,
             Email,
-            Password,
-            MacSecret
+            Password
         );
     }
 
     public GetUser ToGet()
     {
-        return new GetUser(Id, CreatedAt, UpdatedAt, Email.Value, Name.FirstName, Name.LastName, Name.MiddleName,
-            MacSecret);
+        return new GetUser(Id, CreatedAt, UpdatedAt, Email.Value, Name.FirstName, Name.LastName, Name.MiddleName);
     }
 }

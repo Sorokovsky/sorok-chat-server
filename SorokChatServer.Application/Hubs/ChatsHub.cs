@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using SorokChatServer.Logic.Contracts;
 using SorokChatServer.Logic.Hubs;
+using SorokChatServer.Logic.Models;
 using SorokChatServer.Logic.Services;
 
 namespace SorokChatServer.Application.Hubs;
@@ -46,14 +47,11 @@ public class ChatsHub : Hub<IChatsHub>
         }
         else
         {
-            var result = await _chatsService.AddMessageAsync(chatId, _currentUserService.Current.Id, message,
-                Context.ConnectionAborted);
+            var result = Message.Create(message.Text, message.Mac, _currentUserService.Current);
             if (result.IsFailure) return;
-            var createdMessage = result.Value.Messages.MaxBy(x => x.CreatedAt);
-            if (createdMessage is null) return;
             await Clients
                 .Group(chatId.ToString())
-                .ReceiveMessageAsync(createdMessage.ToGet(), chatId);
+                .ReceiveMessageAsync(result.Value.ToGet(), chatId);
         }
     }
 

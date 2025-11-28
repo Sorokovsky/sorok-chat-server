@@ -5,4 +5,6 @@ namespace SorokChatServer.Logic.Hubs;
 public interface IChatsHub
 {
     public Task ReceiveMessageAsync(GetMessage message, long chatId);
+
+    public Task ReceiveExchangeAsync(string staticPublicKey, string ephemeralKey, long userId);
 }

@@ -1,7 +1,7 @@
 ﻿namespace SorokChatServer.Logic.Contracts;
 
 public record GetMessage(
-    long Id,
+    Guid Id,
     DateTime CreatedAt,
     DateTime UpdatedAt,
     string Text,

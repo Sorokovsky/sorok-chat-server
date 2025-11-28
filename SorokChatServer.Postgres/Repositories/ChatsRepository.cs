@@ -20,8 +20,6 @@ public class ChatsRepository : IChatsRepository
     {
         var result = await _context.Chats.AsNoTracking()
             .Include(chat => chat.Members)
-            .Include(chat => chat.Messages)
-            .ThenInclude(chatMessage => chatMessage.Author)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         if (result is null) return Result.Failure<Chat>(NotFoundMessage);
         return Result.Success(Chat.FromEntity(result));
@@ -31,8 +29,6 @@ public class ChatsRepository : IChatsRepository
     {
         var result = await _context.Chats.AsNoTracking()
             .Include(chat => chat.Members)
-            .Include(chat => chat.Messages)
-            .ThenInclude(chatMessage => chatMessage.Author)
             .FirstOrDefaultAsync(x => x.Title.Value == title, cancellationToken);
         if (result is null) return Result.Failure<Chat>(NotFoundMessage);
         return Result.Success(Chat.FromEntity(result));
@@ -42,8 +38,6 @@ public class ChatsRepository : IChatsRepository
     {
         return await _context.Chats.AsNoTracking()
             .Include(chat => chat.Members)
-            .Include(chat => chat.Messages)
-            .ThenInclude(chatMessage => chatMessage.Author)
             .Where(chat => chat.Members.Any(member => member.Id == userId))
             .Select(chat => Chat.FromEntity(chat))
             .ToListAsync(cancellationToken);
@@ -59,11 +53,6 @@ public class ChatsRepository : IChatsRepository
             {
                 if (_context.Entry(member).State != EntityState.Unchanged)
                     _context.Entry(member).State = EntityState.Unchanged;
-            });
-            entity.Messages.ForEach(message =>
-            {
-                if (_context.Entry(message).State != EntityState.Unchanged)
-                    _context.Entry(message).State = EntityState.Unchanged;
             });
             var created = await _context.Chats.AddAsync(entity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
@@ -85,10 +74,6 @@ public class ChatsRepository : IChatsRepository
         var entity = chat.ToEntity();
         entity.Id = id;
         entity.UpdatedAt = DateTime.UtcNow;
-        entity.Messages.ForEach(x =>
-        {
-            if (x.Id == 0) _context.Entry(x).State = EntityState.Added;
-        });
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
         try
         {

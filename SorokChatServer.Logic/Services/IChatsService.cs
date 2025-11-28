@@ -10,13 +10,7 @@ public interface IChatsService
     public Task<Result<Chat>> GetByTitleAsync(string title, CancellationToken cancellationToken = default);
     public Task<List<Chat>> GetByUserAsync(long userId, CancellationToken cancellationToken = default);
 
-    public Task<Result<Chat>> CreateAsync(CreateChat createdChat, User author,
-        CancellationToken cancellationToken = default);
-
-    public Task<Result<Chat>> AddMessageAsync(long chatId, long userId, CreateMessage createdMessage,
-        CancellationToken cancellationToken = default);
-
-    public Task<Result<Chat>> RemoveMessageAsync(long chatId, long messageId,
+    public Task<Result<Chat>> CreateAsync(CreateChat createdChat, User author, User opponent,
         CancellationToken cancellationToken = default);
 
     public Task<Result<Chat>> AddUserAsync(long chatId, long userId, CancellationToken cancellationToken = default);

@@ -6,8 +6,5 @@ public record GetChat(
     DateTime UpdatedAt,
     string Title,
     string Description,
-    List<GetUser> Members,
-    List<GetMessage> Messages,
-    string StaticPublicKey,
-    string EphemeralPublicKey
+    List<GetUser> Members
 );
