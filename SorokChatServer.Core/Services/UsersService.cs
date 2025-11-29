@@ -37,7 +37,8 @@ public class UsersService : IUsersService
             createdUser.LastName,
             createdUser.MiddleName,
             createdUser.Email,
-            passwordResult.Value
+            passwordResult.Value,
+            createdUser.PublicRsaKey
         );
         if (created.IsFailure) return Result.Failure<User>(created.Error);
         return await _repository.CreateAsync(created.Value, cancellationToken);
@@ -56,6 +57,18 @@ public class UsersService : IUsersService
         if (emailResult.IsSuccess) entity.Email = emailResult.Value;
         if (passwordResult.IsSuccess) entity.Password = passwordResult.Value;
         return await _repository.UpdateAsync(id, User.FromEntity(entity), cancellationToken);
+    }
+
+    public async Task<Result<User>> SetPublicRsaKey(long id, string publicRsaKey,
+        CancellationToken cancellationToken = default)
+    {
+        var userResult = await _repository.GetByIdAsync(id, cancellationToken);
+        if (userResult.IsFailure) return Result.Failure<User>(userResult.Error);
+        var user = userResult.Value.ToEntity();
+        user.PublicRsaKey = publicRsaKey;
+        var saved = await _repository.UpdateAsync(id, User.FromEntity(user), cancellationToken);
+        if (saved.IsFailure) return Result.Failure<User>(saved.Error);
+        return Result.Success(saved.Value);
     }
 
     public async Task<Result<User>> DeleteAsync(long userId, CancellationToken cancellationToken = default)

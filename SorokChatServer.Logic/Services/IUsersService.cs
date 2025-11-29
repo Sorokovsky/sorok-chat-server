@@ -15,5 +15,8 @@ public interface IUsersService
     public Task<Result<User>> UpdateAsync(long id, UpdateUser updatedUser,
         CancellationToken cancellationToken = default);
 
+    public Task<Result<User>> SetPublicRsaKey(long id, string publicRsaKey,
+        CancellationToken cancellationToken = default);
+
     public Task<Result<User>> DeleteAsync(long userId, CancellationToken cancellationToken = default);
 }

@@ -64,6 +64,7 @@ public class UsersRepository : IUsersRepository
         {
             _context.Users.Update(entity);
             await _context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
             return Result.Success(User.FromEntity(entity));
         }
         catch (Exception exception)

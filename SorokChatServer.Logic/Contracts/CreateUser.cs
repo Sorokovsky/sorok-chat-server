@@ -5,5 +5,6 @@ public record CreateUser(
     string LastName,
     string MiddleName,
     string Email,
-    string Password
+    string Password,
+    string PublicRsaKey
 );

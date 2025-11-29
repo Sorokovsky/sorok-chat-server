@@ -11,10 +11,12 @@ namespace SorokChatServer.Application.Controllers;
 public class AuthenticationController : ControllerBase
 {
     private readonly IAuthenticationService _authenticationService;
+    private readonly IUsersService _usersService;
 
-    public AuthenticationController(IAuthenticationService authenticationService)
+    public AuthenticationController(IAuthenticationService authenticationService, IUsersService usersService)
     {
         _authenticationService = authenticationService;
+        _usersService = usersService;
     }
 
     [HttpPost("register")]
@@ -34,6 +36,20 @@ public class AuthenticationController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         var result = await _authenticationService.LoginAsync(loginUser, cancellationToken);
+        if (result.IsFailure) return BadRequest(result.Error);
+        return Ok(result.Value.ToGet());
+    }
+
+    [HttpPut("set-rsa-key")]
+    [Authorize]
+    public async Task<IActionResult> SetRsaKey(
+        [FromBody] RsaChange rsaChange,
+        [FromServices] ICurrentUserService currentUser,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var result =
+            await _usersService.SetPublicRsaKey(currentUser.Current!.Id, rsaChange.PublicRsaKey, cancellationToken);
         if (result.IsFailure) return BadRequest(result.Error);
         return Ok(result.Value.ToGet());
     }

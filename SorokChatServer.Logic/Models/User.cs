@@ -12,17 +12,21 @@ public class User : Base
         DateTime updatedAt,
         Name name,
         Email email,
-        HashedPassword hashedPassword
+        HashedPassword hashedPassword,
+        string publicRsaKey
     ) : base(id, createdAt, updatedAt)
     {
         Name = name;
         Email = email;
         Password = hashedPassword;
+        PublicRsaKey = publicRsaKey;
     }
 
     public Name Name { get; }
 
     public Email Email { get; }
+
+    public string PublicRsaKey { get; }
 
     public HashedPassword Password { get; }
 
@@ -31,7 +35,8 @@ public class User : Base
         string lastName,
         string middleName,
         string email,
-        HashedPassword hashedPassword
+        HashedPassword hashedPassword,
+        string publicRsaKey
     )
     {
         var nameResult = Name.Create(firstName, lastName, middleName);
@@ -52,7 +57,8 @@ public class User : Base
                 DateTime.UtcNow,
                 nameResult.Value,
                 emailResult.Value,
-                hashedPassword
+                hashedPassword,
+                publicRsaKey
             )
         );
     }
@@ -65,7 +71,8 @@ public class User : Base
             entity.UpdatedAt,
             entity.Name,
             entity.Email,
-            entity.Password
+            entity.Password,
+            entity.PublicRsaKey
         );
     }
 
@@ -77,12 +84,22 @@ public class User : Base
             UpdatedAt,
             Name,
             Email,
-            Password
+            Password,
+            PublicRsaKey
         );
     }
 
     public GetUser ToGet()
     {
-        return new GetUser(Id, CreatedAt, UpdatedAt, Email.Value, Name.FirstName, Name.LastName, Name.MiddleName);
+        return new GetUser(
+            Id,
+            CreatedAt,
+            UpdatedAt,
+            Email.Value,
+            Name.FirstName,
+            Name.LastName,
+            Name.MiddleName,
+            PublicRsaKey
+        );
     }
 }

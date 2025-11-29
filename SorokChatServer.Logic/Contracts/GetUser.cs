@@ -7,5 +7,6 @@ public record GetUser(
     string Email,
     string FirstName,
     string LastName,
-    string MiddleName
+    string MiddleName,
+    string PublicRsaKey
 );

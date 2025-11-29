@@ -35,7 +35,7 @@ public class ChatsHub : Hub<IChatsHub>
                         await Groups.AddToGroupAsync(Context.ConnectionId, chat.Id.ToString(),
                             Context.ConnectionAborted);
                         await Clients.Group(chat.Id.ToString())
-                            .ConnectedAsync(chat.Id, _currentUserService.Current.Id);
+                            .ConnectedAsync(chat.Id, _currentUserService.Current.ToGet());
                     })
                 );
             await Task.WhenAll(tasks);
@@ -71,14 +71,22 @@ public class ChatsHub : Hub<IChatsHub>
             var result = await _chatsService.GetByIdAsync(chatId);
             if (result.IsFailure) return;
             await Groups.AddToGroupAsync(Context.ConnectionId, result.Value.Id.ToString(), Context.ConnectionAborted);
-            await Clients.Group(chatId.ToString()).ConnectedAsync(chatId, _currentUserService.Current.Id);
+            await Clients.Group(chatId.ToString()).ConnectedAsync(chatId, _currentUserService.Current.ToGet());
         }
     }
 
-    public async Task SendExchangeAsync(string staticPublicKey, string ephemeralPublicKey, long chatId, long userId)
+    public async Task SendExchangeAsync(
+        string staticPublicKey,
+        string signingStatic,
+        string ephemeralPublicKey,
+        string signingEphemeral,
+        long chatId,
+        long userId
+    )
     {
         await Clients
             .Group(chatId.ToString())
-            .ReceiveExchangeAsync(staticPublicKey, ephemeralPublicKey, userId, chatId);
+            .ReceiveExchangeAsync(staticPublicKey, signingStatic, ephemeralPublicKey, signingEphemeral,
+                _currentUserService.Current!.ToGet(), chatId);
     }
 }
