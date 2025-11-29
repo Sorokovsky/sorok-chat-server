@@ -71,6 +71,7 @@ public class ChatsHub : Hub<IChatsHub>
             var result = await _chatsService.GetByIdAsync(chatId);
             if (result.IsFailure) return;
             await Groups.AddToGroupAsync(Context.ConnectionId, result.Value.Id.ToString(), Context.ConnectionAborted);
+            await Clients.Group(chatId.ToString()).ConnectedAsync(chatId, _currentUserService.Current.Id);
         }
     }
 
