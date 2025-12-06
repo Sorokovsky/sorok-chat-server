@@ -1,20 +1,54 @@
-var builder = WebApplication.CreateBuilder(args);
+using SorokChatServer.Domain.Services;
+using SorokChatServer.Persistence.Postgres;
 
-builder.Services.AddControllers();
-builder.Services.AddOpenApi();
-builder.Services.AddSwaggerGen();
+namespace SorokChatServer.Application;
 
-var app = builder.Build();
+public static class Program
+{
+    public static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-app.MapOpenApi();
+        builder.Services.AddControllers();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+        builder.Services.AddSwagger();
 
-app.UseHttpsRedirection();
+        builder.Services.AddMapper();
 
-app.UseAuthorization();
+        var app = builder.Build();
 
-app.MapControllers();
+        app.MapSwagger();
 
-app.Run();
+        app.UseHttpsRedirection();
+
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.Run();
+    }
+
+    private static void AddMapper(this IServiceCollection services)
+    {
+        services.AddAutoMapper(x =>
+        {
+            x.AddMaps(typeof(PostgresContext).Assembly);
+            x.AddMaps(typeof(IPasswordHasherService).Assembly);
+            x.AddMaps(typeof(Program).Assembly);
+        });
+    }
+
+    private static void AddSwagger(this IServiceCollection services)
+    {
+        services.AddOpenApi();
+        services.AddSwaggerGen();
+        services.AddOpenApi();
+    }
+
+    private static void MapSwagger(this WebApplication app)
+    {
+        app.MapOpenApi();
+        app.UseSwaggerUI();
+        app.UseSwagger();
+    }
+}
