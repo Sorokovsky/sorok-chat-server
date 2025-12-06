@@ -33,18 +33,17 @@ public class User : Base
         )
     {
         var emailResult = Email.Create(email);
-        if (emailResult.IsFailure) return Result.Failure<User, Error>(emailResult.Error);
+        if (emailResult.IsFailure) return emailResult.Error;
         var now = DateTime.UtcNow;
         var fullNameResult = FullName.Create(firstName, lastName, middleName);
-        if (fullNameResult.IsFailure) return Result.Failure<User, Error>(fullNameResult.Error);
-        return Result.Success<User, Error>(new User(
-            0, 
-            now, 
+        if (fullNameResult.IsFailure) return fullNameResult.Error;
+        return new User(
+            0,
+            now,
             now,
             emailResult.Value,
             password,
             fullNameResult.Value
-            )
         );
     }
 }

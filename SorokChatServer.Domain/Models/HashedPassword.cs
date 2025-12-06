@@ -25,20 +25,19 @@ public class HashedPassword : ValueObject
     {
         if (string.IsNullOrWhiteSpace(password))
         {
-            return Result.Failure<HashedPassword, Error>(new Error(PasswordEmptyError, HttpStatusCode.BadRequest));
+            return new Error(PasswordEmptyError, HttpStatusCode.BadRequest);
         }
 
         switch (password.Length)
         {
             case < MinLength:
-                return Result.Failure<HashedPassword, Error>(new Error(PasswordMinLengthError, HttpStatusCode.BadRequest));
+                return new Error(PasswordMinLengthError, HttpStatusCode.BadRequest);
             case > MaxLength:
-                Result.Failure<HashedPassword, Error>(new Error(PasswordMaxLengthError, HttpStatusCode.BadRequest));
-                break;
+                return new Error(PasswordMaxLengthError, HttpStatusCode.BadRequest);
         }
 
         var hashed = passwordHasherService.Hash(password);
-        return Result.Success<HashedPassword, Error>(new HashedPassword(hashed));
+        return new HashedPassword(hashed);
     }
 
     protected override IEnumerable<object> GetEqualityComponents()

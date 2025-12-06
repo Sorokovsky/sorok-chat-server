@@ -21,12 +21,12 @@ public partial class Email : ValueObject
     {
         if (string.IsNullOrWhiteSpace(email))
         {
-            return Result.Failure<Email, Error>(new Error(EmptyEmailError, HttpStatusCode.BadRequest));
+            return new Error(EmptyEmailError, HttpStatusCode.BadRequest);
         }
 
         return EmailRegex().IsMatch(email) is false 
-            ? Result.Failure<Email, Error>(new Error(EmailPatternError, HttpStatusCode.BadRequest)) 
-            : Result.Success<Email, Error>(new Email(email));
+            ? new Error(EmailPatternError, HttpStatusCode.BadRequest)
+            : new Email(email);
     }
     
     protected override IEnumerable<object> GetEqualityComponents()

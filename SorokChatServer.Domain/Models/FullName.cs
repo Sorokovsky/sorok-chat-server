@@ -35,35 +35,35 @@ public class FullName : ValueObject
     {
         if (string.IsNullOrWhiteSpace(firstName))
         {
-            return Result.Failure<FullName, Error>(new Error(FirstNameEmptyError, HttpStatusCode.BadRequest));
+            return new Error(FirstNameEmptyError, HttpStatusCode.BadRequest);
         }
 
         if (firstName.Length > MaxLength)
         {
-            return Result.Failure<FullName, Error>(new Error(MaxLengthFirstNameError, HttpStatusCode.BadRequest));
+            return new Error(MaxLengthFirstNameError, HttpStatusCode.BadRequest);
         }
 
         if (string.IsNullOrWhiteSpace(lastName))
         {
-            return Result.Failure<FullName, Error>(new Error(LastNameEmptyError, HttpStatusCode.BadRequest));
+            return new Error(LastNameEmptyError, HttpStatusCode.BadRequest);
         }
 
         if (lastName.Length > MaxLength)
         {
-            return Result.Failure<FullName, Error>(new Error(MaxLengthLastNameError, HttpStatusCode.BadRequest));
+            return new Error(MaxLengthLastNameError, HttpStatusCode.BadRequest);
         }
 
         if (string.IsNullOrWhiteSpace(middleName))
         {
-            return Result.Failure<FullName, Error>(new Error(MiddleNameEmptyError, HttpStatusCode.BadRequest));
+            return new Error(MiddleNameEmptyError, HttpStatusCode.BadRequest);
         }
 
         if (middleName.Length > MaxLength)
         {
-            return Result.Failure<FullName, Error>(new Error(MaxLengthMiddleNameError, HttpStatusCode.BadRequest));
+            return new Error(MaxLengthMiddleNameError, HttpStatusCode.BadRequest);
         }
 
-        return Result.Success<FullName, Error>(new FullName(firstName, lastName, middleName));
+        return new FullName(firstName, lastName, middleName);
     }
     
     protected override IEnumerable<object> GetEqualityComponents()

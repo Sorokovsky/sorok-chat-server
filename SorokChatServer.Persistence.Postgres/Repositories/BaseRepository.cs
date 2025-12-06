@@ -1,4 +1,5 @@
 using System.Net;
+using AutoMapper;
 using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Logging;
 using SorokChatServer.Domain.Models;
@@ -14,11 +15,17 @@ public class BaseRepository<TModel, TEntity> : IBaseRepository<TModel> where TMo
     
     private readonly PostgresContext _context;
     private readonly ILogger<BaseRepository<TModel, TEntity>> _logger;
+    private readonly IMapper _mapper;
 
-    public BaseRepository(PostgresContext context, ILogger<BaseRepository<TModel, TEntity>> logger)
+    public BaseRepository(
+        PostgresContext context, 
+        ILogger<BaseRepository<TModel, TEntity>> logger,
+        IMapper mapper
+        )
     {
         _context = context;
         _logger = logger;
+        _mapper = mapper;
     }
 
     public async Task<Result<TModel, Error>> CreateAsync(
@@ -29,7 +36,10 @@ public class BaseRepository<TModel, TEntity> : IBaseRepository<TModel> where TMo
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
         try
         {
-            throw new NotImplementedException();
+            var entity = _mapper.Map<TEntity>(model);
+            var createdEntity = await _context.Set<TEntity>().AddAsync(entity, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+            return _mapper.Map<TModel>(createdEntity.Entity);
         }
         catch (Exception exception)
         {
