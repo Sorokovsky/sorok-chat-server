@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SorokChatServer.Application
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SorokChatServer.Domain", "SorokChatServer.Domain\SorokChatServer.Domain.csproj", "{7E7A32D4-5167-4112-B912-B2E8FD88EC9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SorokChatServer.Persistance.Postgress", "SorokChatServer.Persistance.Postgress\SorokChatServer.Persistance.Postgress.csproj", "{1DEE059D-7801-4AA0-ACAD-817C6772E08D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SorokChatServer.Persistence.Postgres", "SorokChatServer.Persistence.Postgres\SorokChatServer.Persistence.Postgres.csproj", "{E3118C94-441E-4C4B-871C-4C0845F10AA4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,9 +20,9 @@ Global
 		{7E7A32D4-5167-4112-B912-B2E8FD88EC9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E7A32D4-5167-4112-B912-B2E8FD88EC9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E7A32D4-5167-4112-B912-B2E8FD88EC9E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1DEE059D-7801-4AA0-ACAD-817C6772E08D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1DEE059D-7801-4AA0-ACAD-817C6772E08D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1DEE059D-7801-4AA0-ACAD-817C6772E08D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1DEE059D-7801-4AA0-ACAD-817C6772E08D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3118C94-441E-4C4B-871C-4C0845F10AA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3118C94-441E-4C4B-871C-4C0845F10AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3118C94-441E-4C4B-871C-4C0845F10AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3118C94-441E-4C4B-871C-4C0845F10AA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
