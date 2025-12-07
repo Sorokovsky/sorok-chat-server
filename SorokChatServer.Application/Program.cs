@@ -67,5 +67,6 @@ public static class Program
     {
         services.AddTransient<IUsersService, UsersService>();
         services.AddSingleton<IPasswordHasherService, Argon2PasswordHasher>();
+        services.AddSingleton<IAccessTokenStorage, BearerTokenStorage>();
     }
 }
