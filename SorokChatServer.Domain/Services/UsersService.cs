@@ -36,10 +36,27 @@ public class UsersService : IUsersService
         return await _repository.GetByEmailAsync(email, cancellationToken);
     }
 
-    public Task<Result<User, Error>> UpdateAsync(long id, UpdateUser updateUser,
+    public async Task<Result<User, Error>> UpdateAsync(long id, UpdateUser updateUser,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var candidateResult = await GetByIdAsync(id, cancellationToken);
+        if (candidateResult.IsFailure) return candidateResult.Error;
+        var candidate = candidateResult.Value;
+        var passwordResult = HashedPassword.Create(updateUser.Password, _passwordHasherService);
+        var password = passwordResult.IsSuccess ? passwordResult.Value : candidate.HashedPassword;
+        var emailResult = Email.Create(updateUser.Email);
+        var email = emailResult.IsSuccess ? emailResult.Value.Value : candidate.Email.Value;
+        var fullNameResult = FullName.Create(updateUser.FirstName, updateUser.LastName, updateUser.MiddleName);
+        var firstName = fullNameResult.IsSuccess ? fullNameResult.Value.FirstName : candidate.FullName.FirstName;
+        var lastName = fullNameResult.IsSuccess ? fullNameResult.Value.LastName : candidate.FullName.LastName;
+        var middleName = fullNameResult.IsSuccess ? fullNameResult.Value.MiddleName : candidate.FullName.MiddleName;
+        var userResult = User.Create(email, password, firstName, lastName, middleName);
+        if (userResult.IsFailure) return userResult.Error;
+        var user = userResult.Value;
+        user.SetId(candidate.Id);
+        user.SetCreatedAt(candidate.CreatedAt);
+        user.SetUpdatedAt(DateTime.UtcNow);
+        return await _repository.UpdateAsync(id, user, cancellationToken);
     }
 
     public async Task<Result<User, Error>> DeleteAsync(long id, CancellationToken cancellationToken = default)

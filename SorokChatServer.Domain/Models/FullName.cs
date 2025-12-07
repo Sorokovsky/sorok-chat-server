@@ -28,9 +28,9 @@ public class FullName : ValueObject
     }
 
     public static Result<FullName, Error> Create(
-        string firstName,
-        string lastName,
-        string middleName
+        string? firstName,
+        string? lastName,
+        string? middleName
     )
     {
         if (string.IsNullOrWhiteSpace(firstName))

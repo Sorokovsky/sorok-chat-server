@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using SorokChatServer.Domain.Contracts.User;
 
 namespace SorokChatServer.Domain.Models;
 
