@@ -1,5 +1,7 @@
+using SorokChatServer.Domain.Repositories;
 using SorokChatServer.Domain.Services;
 using SorokChatServer.Persistence.Postgres;
+using SorokChatServer.Persistence.Postgres.Repositories;
 
 namespace SorokChatServer.Application;
 
@@ -10,6 +12,7 @@ public static class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddDatabase();
+        builder.Services.AddServices();
 
         builder.Services.AddControllers();
 
@@ -57,5 +60,11 @@ public static class Program
     private static void AddDatabase(this IServiceCollection services)
     {
         services.AddTransient<PostgresContext>();
+        services.AddTransient<IUsersRepository, UsersRepository>();
+    }
+
+    private static void AddServices(this IServiceCollection services)
+    {
+        services.AddTransient<IUsersService, UsersService>();
     }
 }
