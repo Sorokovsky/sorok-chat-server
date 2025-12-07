@@ -1,5 +1,5 @@
 ﻿services:
-  Sorokchat.database:
+  sorokchat.database:
     image: postgres:17-alpine
     container_name: sorokchat.postgres
     restart: always

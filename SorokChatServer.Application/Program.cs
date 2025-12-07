@@ -9,7 +9,7 @@ public static class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddTransient<PostgresContext>();
+        builder.Services.AddDatabase();
 
         builder.Services.AddControllers();
 
@@ -52,5 +52,10 @@ public static class Program
         app.MapOpenApi();
         app.UseSwaggerUI();
         app.UseSwagger();
+    }
+
+    private static void AddDatabase(this IServiceCollection services)
+    {
+        services.AddTransient<PostgresContext>();
     }
 }

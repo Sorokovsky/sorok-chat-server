@@ -8,22 +8,23 @@ using SorokChatServer.Persistence.Postgres.Entities;
 
 namespace SorokChatServer.Persistence.Postgres.Repositories;
 
-public abstract class BaseRepository<TModel, TEntity> : IBaseRepository<TModel> where TModel : Base where TEntity : BaseEntity
+public abstract class BaseRepository<TModel, TEntity> : IBaseRepository<TModel>
+    where TModel : Base where TEntity : BaseEntity
 {
-    private const string NotFoundError = "Не знайдено.";
-    
+    protected const string NotFoundError = "Не знайдено.";
+
     private readonly PostgresContext _context;
-    private readonly DbSet<TEntity> _items;
-    private readonly IMapper _mapper;
+    protected readonly DbSet<TEntity> Items;
+    protected readonly IMapper Mapper;
 
     protected BaseRepository(
         PostgresContext context,
         IMapper mapper
-        )
+    )
     {
         _context = context;
-        _mapper = mapper;
-        _items = _context.Set<TEntity>();
+        Mapper = mapper;
+        Items = _context.Set<TEntity>();
     }
 
     public async Task<Result<TModel, Error>> CreateAsync(
@@ -32,28 +33,28 @@ public abstract class BaseRepository<TModel, TEntity> : IBaseRepository<TModel> 
     )
     {
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-        var entity = _mapper.Map<TEntity>(model);
-        var createdEntity = await _items.AddAsync(entity, cancellationToken);
+        var entity = Mapper.Map<TEntity>(model);
+        var createdEntity = await Items.AddAsync(entity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-        return _mapper.Map<TModel>(createdEntity.Entity);
+        return Mapper.Map<TModel>(createdEntity.Entity);
     }
 
     public async Task<Result<TModel, Error>> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {
-        var candidate = await _items
+        var candidate = await Items
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         if (candidate is null) return new Error(NotFoundError, HttpStatusCode.BadRequest);
-        return _mapper.Map<TModel>(candidate);
+        return Mapper.Map<TModel>(candidate);
     }
 
     public async Task<List<TModel>> GetManyAsync(int limit, int offset, CancellationToken cancellationToken = default)
     {
-        return await _items
+        return await Items
             .AsNoTracking()
             .Take(limit)
             .Skip(offset)
-            .Select(x => _mapper.Map<TModel>(x))
+            .Select(x => Mapper.Map<TModel>(x))
             .ToListAsync(cancellationToken);
     }
 
@@ -63,19 +64,19 @@ public abstract class BaseRepository<TModel, TEntity> : IBaseRepository<TModel> 
         var candidateResult = await GetByIdAsync(id, cancellationToken);
         if (candidateResult.IsFailure) return candidateResult.Error;
         var mergedState = Merge(candidateResult.Value, model);
-        var entity = _mapper.Map<TEntity>(mergedState);
-        var updated = _items.Update(entity);
+        var entity = Mapper.Map<TEntity>(mergedState);
+        var updated = Items.Update(entity);
         await _context.SaveChangesAsync(cancellationToken);
-        return _mapper.Map<TModel>(updated.Entity);
+        return Mapper.Map<TModel>(updated.Entity);
     }
 
     public async Task<Result<TModel, Error>> DeleteAsync(long id, CancellationToken cancellationToken = default)
     {
         var candidateResult = await GetByIdAsync(id, cancellationToken);
         if (candidateResult.IsFailure) return candidateResult.Error;
-        await _items.Where(x => x.Id == id).ExecuteDeleteAsync(cancellationToken);
+        await Items.Where(x => x.Id == id).ExecuteDeleteAsync(cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-        return _mapper.Map<TModel>(candidateResult.Value);
+        return Mapper.Map<TModel>(candidateResult.Value);
     }
 
     protected abstract TModel Merge(TModel old, TModel current);
