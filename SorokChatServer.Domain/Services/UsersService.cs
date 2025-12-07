@@ -16,9 +16,14 @@ public class UsersService : IUsersService
         _passwordHasherService = passwordHasherService;
     }
 
-    public Task<Result<User, Error>> CreateAsync(NewUser newUser, CancellationToken cancellationToken = default)
+    public async Task<Result<User, Error>> CreateAsync(NewUser newUser, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var passwordResult = HashedPassword.Create(newUser.Password, _passwordHasherService);
+        if (passwordResult.IsFailure) return passwordResult.Error;
+        var userResult = User.Create(newUser.Email, passwordResult.Value, newUser.FirstName, newUser.LastName,
+            newUser.MiddleName);
+        if (userResult.IsFailure) return userResult.Error;
+        return await _repository.CreateAsync(userResult.Value, cancellationToken);
     }
 
     public async Task<Result<User, Error>> GetByIdAsync(long id, CancellationToken cancellationToken = default)
