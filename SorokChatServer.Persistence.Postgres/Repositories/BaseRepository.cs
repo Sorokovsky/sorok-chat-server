@@ -1,71 +1,82 @@
 using System.Net;
 using AutoMapper;
 using CSharpFunctionalExtensions;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using SorokChatServer.Domain.Models;
 using SorokChatServer.Domain.Repositories;
 using SorokChatServer.Persistence.Postgres.Entities;
 
 namespace SorokChatServer.Persistence.Postgres.Repositories;
 
-public class BaseRepository<TModel, TEntity> : IBaseRepository<TModel> where TModel : Base where TEntity : BaseEntity
+public abstract class BaseRepository<TModel, TEntity> : IBaseRepository<TModel> where TModel : Base where TEntity : BaseEntity
 {
-
-    private const string UnknownError = "Невідома помилка";
+    private const string NotFoundError = "Не знайдено.";
     
     private readonly PostgresContext _context;
-    private readonly ILogger<BaseRepository<TModel, TEntity>> _logger;
+    private readonly DbSet<TEntity> _items;
     private readonly IMapper _mapper;
 
-    public BaseRepository(
-        PostgresContext context, 
-        ILogger<BaseRepository<TModel, TEntity>> logger,
+    protected BaseRepository(
+        PostgresContext context,
         IMapper mapper
         )
     {
         _context = context;
-        _logger = logger;
         _mapper = mapper;
+        _items = _context.Set<TEntity>();
     }
 
     public async Task<Result<TModel, Error>> CreateAsync(
-        TModel model, 
+        TModel model,
         CancellationToken cancellationToken = default
-        )
+    )
     {
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-        try
-        {
-            var entity = _mapper.Map<TEntity>(model);
-            var createdEntity = await _context.Set<TEntity>().AddAsync(entity, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
-            return _mapper.Map<TModel>(createdEntity.Entity);
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, exception.Message);
-            await transaction.RollbackAsync(cancellationToken);
-            return Result.Failure<TModel, Error>(new Error(UnknownError, HttpStatusCode.InternalServerError));
-        }
+        var entity = _mapper.Map<TEntity>(model);
+        var createdEntity = await _items.AddAsync(entity, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        return _mapper.Map<TModel>(createdEntity.Entity);
     }
 
-    public Task<Result<TModel, Error>> GetByIdAsync(long id, CancellationToken cancellationToken = default)
+    public async Task<Result<TModel, Error>> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var candidate = await _items
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        if (candidate is null) return new Error(NotFoundError, HttpStatusCode.BadRequest);
+        return _mapper.Map<TModel>(candidate);
     }
 
-    public Task<List<TModel>> GetManyAsync(long limit, long offset, CancellationToken cancellationToken = default)
+    public async Task<List<TModel>> GetManyAsync(int limit, int offset, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await _items
+            .AsNoTracking()
+            .Take(limit)
+            .Skip(offset)
+            .Select(x => _mapper.Map<TModel>(x))
+            .ToListAsync(cancellationToken);
     }
 
-    public Task<Result<TModel, Error>> UpdateAsync(long id, TModel model, CancellationToken cancellationToken = default)
+    public async Task<Result<TModel, Error>> UpdateAsync(long id, TModel model,
+        CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var candidateResult = await GetByIdAsync(id, cancellationToken);
+        if (candidateResult.IsFailure) return candidateResult.Error;
+        var mergedState = Merge(candidateResult.Value, model);
+        var entity = _mapper.Map<TEntity>(mergedState);
+        var updated = _items.Update(entity);
+        await _context.SaveChangesAsync(cancellationToken);
+        return _mapper.Map<TModel>(updated.Entity);
     }
 
-    public Task<Result<TModel, Error>> DeleteAsync(long id, CancellationToken cancellationToken = default)
+    public async Task<Result<TModel, Error>> DeleteAsync(long id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var candidateResult = await GetByIdAsync(id, cancellationToken);
+        if (candidateResult.IsFailure) return candidateResult.Error;
+        await _items.Where(x => x.Id == id).ExecuteDeleteAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        return _mapper.Map<TModel>(candidateResult.Value);
     }
+
+    protected abstract TModel Merge(TModel old, TModel current);
 }

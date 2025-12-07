@@ -1,9 +1,26 @@
 using Microsoft.EntityFrameworkCore;
-using SorokChatServer.Persistence.Postgres.Entities;
+using Microsoft.Extensions.Configuration;
 
 namespace SorokChatServer.Persistence.Postgres;
 
 public class PostgresContext : DbContext
 {
-    public DbSet<UserEntity> Users => Set<UserEntity>();
+    private readonly IConfiguration _configuration;
+
+    public PostgresContext(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(PostgresContext).Assembly);
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder
+            .UseSnakeCaseNamingConvention()
+            .UseNpgsql(_configuration.GetConnectionString(nameof(PostgresContext)));
+    }
 }

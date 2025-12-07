@@ -9,6 +9,8 @@ public static class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.AddTransient<PostgresContext>();
+
         builder.Services.AddControllers();
 
         builder.Services.AddSwagger();
