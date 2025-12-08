@@ -73,6 +73,8 @@ public static class Program
         services.AddSingleton<IRefreshTokenStorage, CookieTokenStorage>();
         services.AddSingleton<ITokenSerializer, JwtTokenService>();
         services.AddSingleton<ITokenDeserializer, JwtTokenService>();
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddHttpContextAccessor();
     }
 
     private static void AddConfigs(this WebApplicationBuilder builder)
