@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SorokChatServer.Domain\SorokChatServer.Domain.csproj" />
+        <ProjectReference Include="..\SorokChatServer.Mapper\SorokChatServer.Mapper.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

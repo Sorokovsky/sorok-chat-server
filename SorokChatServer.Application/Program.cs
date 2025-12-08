@@ -1,6 +1,7 @@
 using SorokChatServer.Domain.Options;
 using SorokChatServer.Domain.Repositories;
 using SorokChatServer.Domain.Services;
+using SorokChatServer.Mapper;
 using SorokChatServer.Persistence.Postgres;
 using SorokChatServer.Persistence.Postgres.Repositories;
 
@@ -37,12 +38,7 @@ public static class Program
 
     private static void AddMapper(this IServiceCollection services)
     {
-        services.AddAutoMapper(x =>
-        {
-            x.AddMaps(typeof(PostgresContext).Assembly);
-            x.AddMaps(typeof(IPasswordHasherService).Assembly);
-            x.AddMaps(typeof(Program).Assembly);
-        });
+        services.AddSingleton<IMapper, ReflexesMapper>();
     }
 
     private static void AddSwagger(this IServiceCollection services)

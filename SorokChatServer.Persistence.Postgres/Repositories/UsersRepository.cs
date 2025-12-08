@@ -1,9 +1,9 @@
 ﻿using System.Net;
-using AutoMapper;
 using CSharpFunctionalExtensions;
 using Microsoft.EntityFrameworkCore;
 using SorokChatServer.Domain.Models;
 using SorokChatServer.Domain.Repositories;
+using SorokChatServer.Mapper;
 using SorokChatServer.Persistence.Postgres.Entities;
 
 namespace SorokChatServer.Persistence.Postgres.Repositories;
