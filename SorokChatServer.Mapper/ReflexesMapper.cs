@@ -24,19 +24,14 @@ public class ReflexesMapper : IMapper
         foreach (var destinationProperty in destinationProperties)
         {
             var sourceProperty = source.GetType().GetProperty(destinationProperty.Name, flags);
-            var destinationType = destType.GetProperty(destinationProperty.Name, flags);
-            if (CanMap(sourceProperty, destinationProperty))
-                destinationType?.SetValue(destinationInstance, sourceProperty?.GetValue(source));
+            if (sourceProperty is null || !sourceProperty.CanRead || !destinationProperty.CanWrite) continue;
+            var value = sourceProperty.GetValue(source);
+            if (value is null || !value.GetType().IsAssignableTo(destinationProperty.PropertyType))
+                value = Map(value!, destinationProperty.PropertyType);
+
+            destinationProperty.SetValue(destinationInstance, value);
         }
 
         return destinationInstance;
-    }
-
-    private static bool CanMap(PropertyInfo? sourceProperty, PropertyInfo? destinationProperty)
-    {
-        if (destinationProperty is null || sourceProperty is null) return false;
-        var canChange = sourceProperty.CanRead && destinationProperty.CanWrite;
-        var isEqual = sourceProperty.PropertyType == destinationProperty.PropertyType;
-        return canChange && isEqual;
     }
 }
