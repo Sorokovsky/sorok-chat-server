@@ -1,3 +1,4 @@
+using SorokChatServer.Domain.Options;
 using SorokChatServer.Domain.Repositories;
 using SorokChatServer.Domain.Services;
 using SorokChatServer.Persistence.Postgres;
@@ -10,6 +11,7 @@ public static class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.AddConfigs();
 
         builder.Services.AddDatabase();
         builder.Services.AddServices();
@@ -69,5 +71,12 @@ public static class Program
         services.AddSingleton<IPasswordHasherService, Argon2PasswordHasher>();
         services.AddSingleton<IAccessTokenStorage, BearerTokenStorage>();
         services.AddSingleton<IRefreshTokenStorage, CookieTokenStorage>();
+        services.AddSingleton<ITokenSerializer, JwtTokenService>();
+        services.AddSingleton<ITokenDeserializer, JwtTokenService>();
+    }
+
+    private static void AddConfigs(this WebApplicationBuilder builder)
+    {
+        builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
     }
 }
