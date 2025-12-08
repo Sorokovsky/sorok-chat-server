@@ -11,21 +11,20 @@ public class ReflexesMapper : IMapper
 
     public TDest Map<TDest, TSource>(TSource source)
     {
-        return (TDest)Map(source, typeof(TDest));
+        return (TDest)Map(source!, typeof(TDest));
     }
 
-    private object Map(object? source, Type destType)
+    private object Map(object source, Type destType)
     {
         ArgumentNullException.ThrowIfNull(source);
-        const BindingFlags destinationFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty;
-        const BindingFlags sourceFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty;
-        var destinationProperties = destType.GetProperties(destinationFlags);
+        const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public;
+        var destinationProperties = destType.GetProperties(flags);
         var destinationInstance = Activator.CreateInstance(destType);
         if (destinationInstance is null) throw new NullReferenceException();
         foreach (var destinationProperty in destinationProperties)
         {
-            var sourceProperty = source.GetType().GetProperty(destinationProperty.Name, sourceFlags);
-            var destinationType = destType.GetProperty(destinationProperty.Name);
+            var sourceProperty = source.GetType().GetProperty(destinationProperty.Name, flags);
+            var destinationType = destType.GetProperty(destinationProperty.Name, flags);
             if (CanMap(sourceProperty, destinationProperty))
                 destinationType?.SetValue(destinationInstance, sourceProperty?.GetValue(source));
         }
